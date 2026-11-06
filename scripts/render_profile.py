@@ -44,20 +44,24 @@ PROJECTS = [
      "mobile_lines": ["Minecraft shop fork with fixes", "for trades and item duplication."],
      "stack": "Java · NeoForge · fork"},
     {"repo": "NotEnoughRevivesReforged", "file": "not-enough-revives",
-     "title": "Not Enough Revives Reforged", "color": "green", "logo": "java",
+     "title": "Not Enough Revives Reforged", "color": "green", "logo": "java", "project_logo": "not-enough-revives.gif",
      "lines": ["Minecraft mod for downed players and cooperative revives."],
      "mobile_lines": ["Minecraft mod for downed players", "and cooperative revives."],
      "stack": "Java · NeoForge"},
 ]
 SKILLS = [
-    ("python", "Python"), ("java", "Java"), ("cplusplus", "C++"),
-    ("javascript", "JavaScript"), ("typescript", "TypeScript"), ("bash", "Bash"),
-    ("react", "React"), ("nextjs", "Next.js"), ("vuejs", "Vue"),
-    ("html5", "HTML / CSS"), ("tailwindcss", "Tailwind"), ("nodejs", "Node.js"),
-    ("express", "Express"), ("qt", "Qt"), ("gtk", "GTK"),
-    ("electron", "Electron"), ("discordjs", "Discord.js"), ("mysql", "MySQL"),
-    ("postgresql", "PostgreSQL"), ("prisma", "Prisma"), ("docker", "Docker"),
-    ("cloudflare", "Cloudflare"), ("linux", "Linux"), ("git", "Git"),
+    ("python", "Python", "https://www.python.org/"),
+    ("java", "Java", "https://dev.java/"),
+    ("javascript", "JavaScript", "https://tc39.es/ecma262/"),
+    ("typescript", "TypeScript", "https://www.typescriptlang.org/"),
+    ("vuejs", "Vue", "https://vuejs.org/"),
+    ("nodejs", "Node.js", "https://nodejs.org/"),
+    ("qt", "Qt", "https://www.qt.io/"),
+    ("react", "React", "https://react.dev/"),
+    ("mysql", "MySQL", "https://www.mysql.com/"),
+    ("docker", "Docker", "https://www.docker.com/"),
+    ("linux", "Linux", "https://www.kernel.org/"),
+    ("git", "Git", "https://git-scm.com/"),
 ]
 
 
@@ -263,24 +267,12 @@ def header(*, compact=False):
     return svg(width, height, USER, body, "making what i need. sometimes releasing it.")
 
 
-def skills(*, compact=False):
-    columns = 3 if compact else 6
-    width, height = (440, 860) if compact else (880, 452)
-    body = [frame(width, height)]
-    cell = (width-32)/columns
-    for i, (name, label) in enumerate(SKILLS):
-        center = 16+(i%columns+0.5)*cell
-        y = 28+(i//columns)*102
-        if name in {"express", "prisma", "gtk", "bash", "electron", "mysql"}:
-            body.append(rect(round(center-26,2), y-2, 52, 52, "text", 10))
-        if name == "html5":
-            body += [logo(name, round(center-40,2), y+4, 36),
-                     logo("css3", round(center+3,2), y+4, 36)]
-        else:
-            body.append(logo(name, round(center-24,2), y, 48))
-        body.append(text(round(center,2), y+77, label, 21, "text", anchor="middle", weight=500))
-    return svg(width, height, "Skills and tools", body,
-               "Tools used across public and private projects: "+", ".join(label for _, label in SKILLS))
+def skill_card(name, label):
+    body = [frame(140, 120)]
+    if name == "mysql":
+        body.append(rect(44, 14, 52, 52, "text", 10))
+    body += [logo(name, 46, 16, 48), text(70, 95, label, 20, "text", anchor="middle", weight=500)]
+    return svg(140, 120, label, body, f"Open the official {label} site")
 
 
 def project_mark(project, x, y, size):
@@ -294,7 +286,8 @@ def project_mark(project, x, y, size):
         node.set("width", str(size)); node.set("height", str(size))
         return ET.tostring(node, encoding="unicode")
     encoded = base64.b64encode(path.read_bytes()).decode("ascii")
-    return f'<image x="{x}" y="{y}" width="{size}" height="{size}" href="data:image/png;base64,{encoded}"/>'
+    mime = "image/gif" if path.suffix == ".gif" else "image/png"
+    return f'<image x="{x}" y="{y}" width="{size}" height="{size}" href="data:{mime};base64,{encoded}"/>'
 
 
 def project_card(project, *, compact=False):
@@ -325,11 +318,13 @@ def activity(data, *, compact=False):
     stars = sum(r["stargazers_count"] for r in data["repos"] if not r["fork"])+private["stars_received"]
     start = date.fromisoformat(days[0]["date"])
     sunday = start - timedelta(days=(start.weekday()+1) % 7)
-    width, height = (440, 502) if compact else (880, 430)
+    width, height = (440, 536) if compact else (880, 430)
     body = [frame(width, height), text(28, 42, "GitHub", 26, weight=600),
             text(142, 42, "Public + private", 20, "muted")]
-    if not compact:
-        body.append(text(width-28, 41, f"{start:%b %Y} — {today:%b %Y}", 20, "muted", anchor="end"))
+    if compact:
+        body.append(text(28, 73, f"{start:%b %Y} → {today:%b %Y}", 20, "muted"))
+    else:
+        body.append(text(width-28, 41, f"{start:%b %Y} → {today:%b %Y}", 20, "muted", anchor="end"))
     for i, (value, label, color) in enumerate([
         (repository_count, "repositories", "lavender"),
         (total, "contributions / year", "teal"),
@@ -337,13 +332,13 @@ def activity(data, *, compact=False):
         (stars, "stars received", "yellow"),
     ]):
         x = 28+(i%2)*212 if compact else 28+i*213
-        y = 105+(i//2)*106 if compact else 119
+        y = 137+(i//2)*106 if compact else 119
         body += [text(x, y, f"{value:,}", 48 if compact else 54, color, weight=600, spacing=-1),
                  text(x, y+33, label, 20, "subtext")]
-    divider = 273 if compact else 190
+    divider = 311 if compact else 190
     body += [line(28, divider, width-28, divider),
              text(28, divider+37, "Last 26 weeks" if compact else "Contributions over the last year", 22, "subtext")]
-    x0, y0, step, size = (66, 357, 12.5, 9) if compact else (66, 275, 14.7, 11)
+    x0, y0, step, size = (66, 395, 12.5, 9) if compact else (66, 275, 14.7, 11)
     if compact:
         sunday = today-timedelta(days=(today.weekday()+1)%7, weeks=25)
     for weekday, label in [(1, "M"), (3, "W"), (5, "F")]:
@@ -435,17 +430,18 @@ def project_list(data):
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
     assets = {"header.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
-              "skills.svg": skills(), "header-mobile.svg": header(compact=True),
+              "header-mobile.svg": header(compact=True),
               "activity-mobile.svg": activity(data, compact=True),
-              "insights-mobile.svg": insights(data, compact=True), "skills-mobile.svg": skills(compact=True)}
+              "insights-mobile.svg": insights(data, compact=True)}
     assets.update({p["file"]+".svg": project_card(p) for p in PROJECTS})
+    assets.update({"skill-"+name+".svg": skill_card(name, label) for name, label, _ in SKILLS})
     readme_path = root / "README.md"
     readme = readme_path.read_text()
     pattern = r"(?<=<!-- PROJECTS:START -->).*?(?=<!-- PROJECTS:END -->)"
     if len(re.findall(pattern, readme, re.S)) != 1:
         raise ValueError("README project markers are missing or ambiguous")
     readme = re.sub(pattern, lambda _: "\n\n"+project_list(data)+"\n\n", readme, flags=re.S)
-    artwork = root / "assets" / "profile-v3"
+    artwork = root / "assets" / "profile-v4"
     artwork.mkdir(parents=True, exist_ok=True)
     for filename, contents in assets.items():
         (artwork / filename).write_text(contents)
@@ -465,7 +461,7 @@ def main():
     if args.save_data:
         args.save_data.parent.mkdir(parents=True, exist_ok=True)
         args.save_data.write_text(json.dumps(data, indent=2)+"\n")
-    print(f"Rendered {len(PROJECTS)+8} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
+    print(f"Rendered {len(PROJECTS)+len(SKILLS)+6} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
 
 
 if __name__ == "__main__":

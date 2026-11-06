@@ -20,7 +20,7 @@ Images and tool logos are stored in this repository.
   the totals still cover the full year.
 - The weekly chart groups the last twelve calendar weeks, Sunday through
   Saturday. The current week is incomplete.
-- Skills list tools used in public and private projects. It reflects languages,
+- The 12 skills list tools used in public and private projects. It reflects languages,
   dependencies, and project configuration, without proficiency ratings or private
   project names.
 - The expanded project list includes public, non-fork, non-archived repositories
@@ -81,5 +81,7 @@ from [Simple Icons](https://simpleicons.org/), with its
 [CC0 license](../assets/logos/SIMPLE-ICONS-LICENSE.txt) included.
 
 The project cards reuse the existing Automater, CTM Generator, and Spuds Shop
-artwork. Not Enough Revives uses the Java mark because it has no published
-project logo in its source repository. Every project card links to its repository.
+artwork. Not Enough Revives uses the original mod's icon from
+[SirTerminator's Modrinth project](https://modrinth.com/mod/notenoughrevives).
+Every project card links to its repository, and each skill tile links to its
+official language, framework, or tool site.
