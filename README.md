@@ -12,7 +12,7 @@
   <a href="https://github.com/oNxZero/Moonlight"><img src="assets/profile-v5/moonlight-compact.svg" width="400" alt="Moonlight — Linux auto-clicker with adjustable timing and presets." /></a>
   <br />
   <a href="https://github.com/oNxZero/Automater"><img src="assets/profile-v5/automater-compact.svg" width="400" alt="Automater — keyboard and mouse recording on Linux." /></a>
-  <a href="https://github.com/oNxZero/rosis-shop"><img src="assets/profile-v5/rosis-shop-emblem-compact.svg" width="400" alt="Rosis Shop — decorative Minecraft shops with trades, stock, and staff access." /></a>
+  <a href="https://github.com/oNxZero/rosis-shop"><img src="assets/profile-v5/rosis-shop-mark-compact.svg" width="400" alt="Rosis Shop — decorative Minecraft shops with trades, stock, and staff access." /></a>
 </p>
 
 ### Skills
