@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="214" viewBox="0 0 432 214" role="img" aria-labelledby="title desc">
+<title id="title">CTM Generator</title>
+<desc id="desc">One block texture in. A connected texture pack out. Python  /  Flet + Pillow</desc>
+<rect x="0.5" y="0.5" width="431" height="201" rx="12" fill="#24273a" stroke="#363a4f"/>
+<text x="24" y="30" fill="#8bd5ca" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0.6">TEXTURE TOOL</text>
+<g transform="translate(367 46)" fill="none" stroke="#8bd5ca" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="13" height="13" rx="2"/><rect x="23" y="3" width="13" height="13" rx="2"/><rect x="3" y="23" width="13" height="13" rx="2"/><rect x="23" y="23" width="13" height="13" rx="2"/><path d="M16 9h7M9 16v7M30 16v7M16 30h7"/></g>
+<text x="24" y="72" fill="#cad3f5" font-size="23" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-0.5">CTM Generator</text>
+<text x="24" y="105" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">One block texture in.</text>
+<text x="24" y="127" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">A connected texture pack out.</text>
+<line x1="24" y1="150" x2="408" y2="150" stroke="#363a4f" />
+<text x="24" y="180" fill="#a5adcb" font-size="11" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">Python  /  Flet + Pillow</text>
+<path d="M393 183l12-12m-10 0h10v10" fill="none" stroke="#8bd5ca" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="214" viewBox="0 0 432 214" role="img" aria-labelledby="title desc">
+<title id="title">Not Enough Revives</title>
+<desc id="desc">Downed players. Cooperative revives. Server-side fixes and customization. Java  /  NeoForge</desc>
+<rect x="0.5" y="0.5" width="431" height="201" rx="12" fill="#24273a" stroke="#363a4f"/>
+<text x="24" y="30" fill="#a6da95" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0.6">MINECRAFT / REFORGED</text>
+<g transform="translate(367 46)" fill="none" stroke="#a6da95" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h10v11h11v10H25v11H15V25H4V15h11Z"/></g>
+<text x="24" y="72" fill="#cad3f5" font-size="23" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-0.5">Not Enough Revives</text>
+<text x="24" y="105" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Downed players. Cooperative revives.</text>
+<text x="24" y="127" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Server-side fixes and customization.</text>
+<line x1="24" y1="150" x2="408" y2="150" stroke="#363a4f" />
+<text x="24" y="180" fill="#a5adcb" font-size="11" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">Java  /  NeoForge</text>
+<path d="M393 183l12-12m-10 0h10v10" fill="none" stroke="#a6da95" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

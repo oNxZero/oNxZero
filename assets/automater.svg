@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="214" viewBox="0 0 432 214" role="img" aria-labelledby="title desc">
+<title id="title">Automater</title>
+<desc id="desc">Record input. Edit the workflow. Play it back on Linux. Python  /  X11 + Wayland</desc>
+<rect x="0.5" y="0.5" width="431" height="201" rx="12" fill="#24273a" stroke="#363a4f"/>
+<text x="24" y="30" fill="#b7bdf8" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0.6">LINUX TOOL</text>
+<g transform="translate(367 46)" fill="none" stroke="#b7bdf8" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v28l7-7 6 12 6-3-6-11h11Z"/></g>
+<text x="24" y="72" fill="#cad3f5" font-size="23" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-0.5">Automater</text>
+<text x="24" y="105" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Record input. Edit the workflow.</text>
+<text x="24" y="127" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Play it back on Linux.</text>
+<line x1="24" y1="150" x2="408" y2="150" stroke="#363a4f" />
+<text x="24" y="180" fill="#a5adcb" font-size="11" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">Python  /  X11 + Wayland</text>
+<path d="M393 183l12-12m-10 0h10v10" fill="none" stroke="#b7bdf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

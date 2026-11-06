@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="214" viewBox="0 0 432 214" role="img" aria-labelledby="title desc">
+<title id="title">Spuds Shop Reforged</title>
+<desc id="desc">Player shops, trade accounting, and fewer ways to dupe items. Java  /  NeoForge</desc>
+<rect x="0.5" y="0.5" width="431" height="201" rx="12" fill="#24273a" stroke="#363a4f"/>
+<text x="24" y="30" fill="#f5a97f" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0.6">MINECRAFT / COMMUNITY FORK</text>
+<g transform="translate(367 46)" fill="none" stroke="#f5a97f" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17h32l-4-12H8L4 17ZM7 22v13h26V22M16 35V23h9v12M4 17v3a4 4 0 0 0 8 0 4 4 0 0 0 8 0 4 4 0 0 0 8 0 4 4 0 0 0 8 0v-3"/></g>
+<text x="24" y="72" fill="#cad3f5" font-size="23" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-0.5">Spuds Shop Reforged</text>
+<text x="24" y="105" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Player shops, trade accounting,</text>
+<text x="24" y="127" fill="#b8c0e0" font-size="14" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">and fewer ways to dupe items.</text>
+<line x1="24" y1="150" x2="408" y2="150" stroke="#363a4f" />
+<text x="24" y="180" fill="#a5adcb" font-size="11" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">Java  /  NeoForge</text>
+<path d="M393 183l12-12m-10 0h10v10" fill="none" stroke="#f5a97f" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
