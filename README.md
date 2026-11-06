@@ -67,4 +67,4 @@ Used across my public and private projects. Each logo links to its official site
 
 </details>
 
-Updates daily. [Profile source](https://github.com/oNxZero/oNxZero) · [How the stats work](docs/PROFILE.md)
+Updates hourly. [Profile source](https://github.com/oNxZero/oNxZero) · [How the stats work](docs/PROFILE.md)

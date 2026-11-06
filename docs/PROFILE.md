@@ -36,9 +36,11 @@ Images and tool logos are stored in this repository.
 ## Refresh
 
 [Refresh profile](https://github.com/oNxZero/oNxZero/actions/workflows/profile.yml)
-runs daily at 05:23 UTC, on generator changes, or manually through **Run workflow**.
-Daily activity and public totals use the built-in `GITHUB_TOKEN`. Private repository totals
-use the committed snapshot, refreshed locally when needed. The generator collects
+runs hourly at minute 23, on generator changes, or manually through **Run workflow**.
+GitHub may delay scheduled runs during busy periods. Activity and public totals
+use the built-in `GITHUB_TOKEN`. Private repository totals refresh on every run
+when `PROFILE_STATS_TOKEN` is configured; otherwise they use the committed
+snapshot, refreshed locally when needed. The generator collects
 and validates all data before
 writing assets. If a source request or calendar parse fails, the existing assets
 remain in place and the workflow reports the error.
@@ -62,12 +64,22 @@ python3 scripts/render_profile.py --refresh-private
 
 This writes only aggregate counts to `data/private-totals.json`. Commit that file
 with the refreshed artwork. Private totals remain at the snapshot date between
-these refreshes; contribution graphs continue updating daily.
+these refreshes; contribution graphs continue updating hourly.
 
-If automatic private-total refresh is wanted later, add a dedicated read-only
-owner token as the `PROFILE_STATS_TOKEN` Actions secret, with metadata access to
-all owned repositories. The workflow supports it already. The token stays in
-Actions secrets and is never written into an SVG or committed data.
+To enable automatic private-total refresh:
+
+1. [Create a fine-grained personal access token](https://github.com/settings/personal-access-tokens/new?name=Profile%20stats&target_name=oNxZero&metadata=read)
+   with **oNxZero** as the resource owner, **All repositories**, and only
+   **Metadata: Read-only** repository permission. All repositories includes
+   future repositories, so newly created projects are counted too.
+2. [Add it as an Actions repository secret](https://github.com/oNxZero/oNxZero/settings/secrets/actions/new)
+   named **PROFILE_STATS_TOKEN**.
+3. Run **Refresh profile** once, or wait for the next scheduled run. The workflow
+   refreshes the aggregate private counts before rebuilding the charts.
+
+The token stays in Actions secrets and is never written into an SVG or
+committed data. It does not need access to repository contents or write access.
+The private totals file records the date of the last successful refresh.
 
 For working on the artwork without fetching data again:
 
@@ -78,6 +90,17 @@ python3 scripts/render_profile.py --from-data .cache/profile.json
 
 Edit project descriptions and colors in `scripts/render_profile.py`.
 Edit the README directly; the generator replaces only its `PROJECTS` block.
+
+## GitHub's own profile sections
+
+The README cannot change GitHub's surrounding profile layout. GitHub's
+[private-profile setting](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/setting-your-profile-to-private)
+hides the native contribution graph and activity from visitors, while keeping
+the README visible. It also hides follower counts, Follow and Sponsor buttons,
+and other social features; the owner still sees their own activity.
+There is no separate switch to remove just the native graph and timeline.
+Pinning projects replaces Popular repositories with Pinned; it does not remove
+that section.
 
 ## Logos
 
