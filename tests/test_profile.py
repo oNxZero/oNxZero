@@ -1,4 +1,5 @@
 from datetime import date
+import json
 import importlib.util
 from pathlib import Path
 import tempfile
@@ -56,20 +57,46 @@ class AggregationTests(unittest.TestCase):
         ], date(2026, 1, 5), count=2)
         self.assertEqual(weeks, [(date(2025, 12, 28), 5), (date(2026, 1, 4), 7)])
 
-    def test_source_mix_excludes_private_fork_archive_and_profile(self):
+    def test_public_projects_exclude_private_fork_archive_and_profile(self):
         repos = [{"name": name, "private": private, "fork": fork, "archived": archived}
                  for name, private, fork, archived in [
                      ("tool", False, False, False), ("secret", True, False, False),
                      ("fork", False, True, False), ("archive", False, False, True),
                      ("ONXZERO", False, False, False),
                  ]]
-        self.assertEqual([r["name"] for r in profile.language_repos(repos)], ["tool"])
+        self.assertEqual([r["name"] for r in profile.public_project_repos(repos)], ["tool"])
 
-    def test_language_remainder_preserves_total_and_handles_empty_repos(self):
-        groups = profile.language_groups({"Python": 50, "Java": 20, "Shell": 10, "C": 8, "CSS": 7, "HTML": 5})
-        self.assertEqual(groups[-1], ("Other", 0.2))
-        self.assertAlmostEqual(sum(fraction for _, fraction in groups), 1)
-        self.assertEqual(profile.language_groups({}), [])
+    def test_private_snapshot_rejects_repository_names(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "totals.json"
+            path.write_text(json.dumps({"updated": "2026-11-06", "repository_count": 1,
+                                        "stars_received": 0, "repository_names": ["private-project"]}))
+            with self.assertRaises(ValueError):
+                profile.read_private_totals(path)
+
+    def test_private_refresh_publishes_only_aggregate_counts(self):
+        responses = [{"login": profile.USER, "owned_private_repos": 2}, [
+            {"name": "private-project", "private": True, "owner": {"login": profile.USER}, "stargazers_count": 3, "fork": False},
+            {"name": "private-fork", "private": True, "owner": {"login": profile.USER}, "stargazers_count": 9, "fork": True},
+        ]]
+        with tempfile.TemporaryDirectory() as temp, patch.object(profile, "ROOT", Path(temp)), \
+                patch.object(profile, "api", side_effect=responses), patch.dict("os.environ", {"GH_TOKEN": "test-token"}):
+            result = profile.refresh_private_totals(date(2026, 11, 6))
+            self.assertEqual(result, {"updated": "2026-11-06", "repository_count": 2, "stars_received": 3})
+            saved = (Path(temp) / "data/private-totals.json").read_text()
+            self.assertNotIn("private-project", saved)
+            self.assertNotIn("test-token", saved)
+
+    def test_insufficient_private_access_preserves_snapshot(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(profile, "ROOT", Path(temp)), \
+                patch.object(profile, "api", side_effect=[{"login": profile.USER, "owned_private_repos": 3}, []]), \
+                patch.dict("os.environ", {"GH_TOKEN": "test-token"}):
+            target = Path(temp) / "data/private-totals.json"
+            target.parent.mkdir()
+            target.write_text("previous snapshot")
+            with self.assertRaises(ValueError):
+                profile.refresh_private_totals(date(2026, 11, 6))
+            self.assertEqual(target.read_text(), "previous snapshot")
 
     def test_credentials_cannot_be_sent_to_an_external_api(self):
         with patch.dict("os.environ", {"GH_TOKEN": "example-test-token"}):
@@ -84,7 +111,7 @@ class RenderingTests(unittest.TestCase):
                     {"date": "2026-11-06", "count": 3, "level": 1}],
                 "repos": [], "languages": {"Python": 100, "Java": 50}}
         for compact in [False, True]:
-            for renderer in [profile.activity, profile.insights, profile.languages]:
+            for renderer in [profile.activity, profile.insights]:
                 with self.subTest(compact=compact, renderer=renderer.__name__):
                     root = ET.fromstring(renderer(data, compact=compact))
                     frame = root.find("{http://www.w3.org/2000/svg}rect")
@@ -95,10 +122,18 @@ class RenderingTests(unittest.TestCase):
         data = {"updated": "2026-11-06", "days": [{"date": "2026-11-06", "count": 3, "level": 1}],
                 "repos": [], "languages": {"Python": 100, "Java": 50}}
         for compact in [False, True]:
-            for renderer in [profile.activity, profile.insights, profile.languages]:
+            for renderer in [profile.activity, profile.insights]:
                 root = ET.fromstring(renderer(data, compact=compact))
                 for node in root.iter("{http://www.w3.org/2000/svg}text"):
                     self.assertGreaterEqual(float(node.attrib["font-size"]), 18)
+
+    def test_stats_include_private_repository_totals(self):
+        data = {"updated": "2026-11-06", "days": [{"date": "2026-11-06", "count": 3, "level": 1}],
+                "repos": [{"fork": False, "stargazers_count": 0} for _ in range(16)],
+                "private_totals": {"repository_count": 20, "stars_received": 5}}
+        root = ET.fromstring(profile.activity(data))
+        self.assertIn("36 public and private repositories", root.find("{http://www.w3.org/2000/svg}desc").text)
+        self.assertIn("5 stars received", root.find("{http://www.w3.org/2000/svg}desc").text)
 
     def test_svg_text_is_escaped(self):
         for project in profile.PROJECTS:

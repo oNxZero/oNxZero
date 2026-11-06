@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Render the profile using public GitHub data and the Python standard library."""
+"""Render the profile from GitHub activity and aggregate repository totals."""
 
 import argparse
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
+import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 from html.parser import HTMLParser
@@ -29,37 +29,48 @@ C = {
 }
 PROJECTS = [
     {"repo": "Automater", "file": "automater", "title": "Automater",
-     "color": "lavender", "logo": "python",
+     "color": "lavender", "logo": "python", "project_logo": "automater.svg",
      "lines": ["Record and edit keyboard and mouse input on Linux."],
-     "mobile_lines": ["Record and edit keyboard and", "mouse input on Linux."],
-     "stack": "Python · Linux · X11 / Wayland"},
+     "mobile_lines": ["Record keyboard and mouse input.", "Edit and replay it on Linux."],
+     "stack": "Python · Qt · Linux"},
     {"repo": "CTM-Gen", "file": "ctm-gen", "title": "CTM Generator",
-     "color": "teal", "logo": "python",
+     "color": "teal", "logo": "python", "project_logo": "ctm-gen.png",
      "lines": ["Generate connected texture packs from a block texture."],
      "mobile_lines": ["Generate connected texture packs", "from a block texture."],
      "stack": "Python · Flet · Pillow"},
     {"repo": "spuds-shop-reforged", "file": "spuds-shop-reforged",
-     "title": "Spuds Shop Reforged", "color": "peach", "logo": "java",
+     "title": "Spuds Shop Reforged", "color": "peach", "logo": "java", "project_logo": "spuds-shop-reforged.png",
      "lines": ["Minecraft shop fork with fixes for trades and item duplication."],
      "mobile_lines": ["Minecraft shop fork with fixes", "for trades and item duplication."],
-     "stack": "Java · NeoForge · community fork"},
+     "stack": "Java · NeoForge · fork"},
     {"repo": "NotEnoughRevivesReforged", "file": "not-enough-revives",
      "title": "Not Enough Revives Reforged", "color": "green", "logo": "java",
      "lines": ["Minecraft mod for downed players and cooperative revives."],
      "mobile_lines": ["Minecraft mod for downed players", "and cooperative revives."],
      "stack": "Java · NeoForge"},
 ]
+SKILLS = [
+    ("python", "Python"), ("java", "Java"), ("cplusplus", "C++"),
+    ("javascript", "JavaScript"), ("typescript", "TypeScript"), ("bash", "Bash"),
+    ("react", "React"), ("nextjs", "Next.js"), ("vuejs", "Vue"),
+    ("html5", "HTML / CSS"), ("tailwindcss", "Tailwind"), ("nodejs", "Node.js"),
+    ("express", "Express"), ("qt", "Qt"), ("gtk", "GTK"),
+    ("electron", "Electron"), ("discordjs", "Discord.js"), ("mysql", "MySQL"),
+    ("postgresql", "PostgreSQL"), ("prisma", "Prisma"), ("docker", "Docker"),
+    ("cloudflare", "Cloudflare"), ("linux", "Linux"), ("git", "Git"),
+]
 
 
-def request(url, *, api=False):
+def request(url, *, api=False, token=None):
     headers = {"User-Agent": f"{USER}-profile", "Accept-Language": "en-US,en;q=0.9"}
     if api:
         if not url.startswith("https://api.github.com/"):
             raise ValueError("API credentials may only be sent to api.github.com")
         headers["Accept"] = "application/vnd.github+json"
         headers["X-GitHub-Api-Version"] = "2022-11-28"
-        if os.environ.get("GH_TOKEN"):
-            headers["Authorization"] = f"Bearer {os.environ['GH_TOKEN']}"
+        token = token or os.environ.get("GH_TOKEN")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
     for attempt in range(3):
         try:
             with urlopen(Request(url, headers=headers), timeout=25) as response:
@@ -72,8 +83,49 @@ def request(url, *, api=False):
             time.sleep(2 ** attempt)
 
 
-def api(path):
-    return json.loads(request(f"https://api.github.com{path}", api=True))
+def api(path, *, token=None):
+    return json.loads(request(f"https://api.github.com{path}", api=True, token=token))
+
+
+def read_private_totals(path=None):
+    path = path or ROOT / "data" / "private-totals.json"
+    totals = json.loads(path.read_text())
+    if set(totals) != {"updated", "repository_count", "stars_received"}:
+        raise ValueError("Private totals must contain aggregate counts and a date only")
+    date.fromisoformat(totals["updated"])
+    for key in ["repository_count", "stars_received"]:
+        if type(totals[key]) is not int or totals[key] < 0:
+            raise ValueError("Private repository totals must be nonnegative integers")
+    return totals
+
+
+def refresh_private_totals(today):
+    token = os.environ.get("PROFILE_STATS_TOKEN") or os.environ.get("GH_TOKEN")
+    if not token:
+        raise ValueError("Refreshing private totals requires an authenticated GitHub token")
+    viewer = api("/user", token=token)
+    if viewer.get("login", "").lower() != USER.lower():
+        raise ValueError("Private stats token must belong to the profile owner")
+    repos = []
+    page = 1
+    while True:
+        batch = api(f"/user/repos?visibility=private&affiliation=owner&per_page=100&page={page}", token=token)
+        if not isinstance(batch, list):
+            raise ValueError("Unexpected private repository response")
+        repos.extend(r for r in batch if r.get("private") is True
+                     and r.get("owner", {}).get("login", "").lower() == USER.lower())
+        if len(batch) < 100:
+            break
+        page += 1
+    expected = viewer.get("owned_private_repos")
+    if expected is not None and expected != len(repos):
+        raise ValueError("Token cannot see every owned private repository; keeping the current snapshot")
+    totals = {"updated": today.isoformat(), "repository_count": len(repos),
+              "stars_received": sum(r["stargazers_count"] for r in repos if not r["fork"])}
+    target = ROOT / "data" / "private-totals.json"
+    target.parent.mkdir(exist_ok=True)
+    target.write_text(json.dumps(totals, indent=2)+"\n")
+    return totals
 
 
 class CalendarParser(HTMLParser):
@@ -125,7 +177,7 @@ class CalendarParser(HTMLParser):
         return result
 
 
-def language_repos(repos):
+def public_project_repos(repos):
     return [r for r in repos if not r["private"] and not r["fork"]
             and not r["archived"] and r["name"].lower() != USER.lower()]
 
@@ -147,16 +199,11 @@ def collect(today):
     # GitHub's `to` parameter selects a calendar year, not a rolling date range.
     calendar.feed(request(f"https://github.com/users/{USER}/contributions"))
     days = calendar.days(today)
-    languages = Counter()
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        for detected in pool.map(lambda r: api(f"/repos/{USER}/{quote(r['name'], safe='')}/languages"),
-                                 language_repos(repos)):
-            languages.update(detected)
     return {
         "updated": today.isoformat(), "days": days,
         "repos": [{k: r[k] for k in ("name", "description", "html_url", "private", "fork",
                                     "archived", "stargazers_count", "language")} for r in repos],
-        "languages": dict(languages.most_common()),
+        "private_totals": read_private_totals(),
     }
 
 
@@ -185,7 +232,11 @@ def svg(width, height, title, body, description=""):
 
 
 def frame(width, height):
-    return rect(0.5, 0.5, width-1, height-1, "base", 12, stroke=C["surface0"])
+    shadow = ('<defs><filter id="panel-shadow" x="-10%" y="-10%" width="120%" height="130%">'
+              '<feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#181926" flood-opacity="0.7"/>'
+              '</filter></defs>')
+    return shadow + rect(4, 2, width-12, height-14, "base", 14, stroke=C["surface1"],
+                         stroke_width=1.5, filter="url(#panel-shadow)")
 
 
 def logo(name, x, y, size):
@@ -212,27 +263,55 @@ def header(*, compact=False):
     return svg(width, height, USER, body, "making what i need. sometimes releasing it.")
 
 
-def tools_row(*, compact=False):
-    width, height = (440, 180) if compact else (880, 100)
+def skills(*, compact=False):
+    columns = 3 if compact else 6
+    width, height = (440, 860) if compact else (880, 452)
     body = [frame(width, height)]
-    for i, (name, label) in enumerate([("python", "Python"), ("java", "Java"), ("linux", "Linux"), ("git", "Git")]):
-        x = 28+(i%2)*210 if compact else 32+i*213
-        y = 23+(i//2)*80 if compact else 25
-        body += [logo(name, x, y, 48), text(x+62, y+33, label, 23, "text", weight=500)]
-    return svg(width, height, "Python, Java, Linux and Git", body)
+    cell = (width-32)/columns
+    for i, (name, label) in enumerate(SKILLS):
+        center = 16+(i%columns+0.5)*cell
+        y = 28+(i//columns)*102
+        if name in {"express", "prisma", "gtk", "bash", "electron", "mysql"}:
+            body.append(rect(round(center-26,2), y-2, 52, 52, "text", 10))
+        if name == "html5":
+            body += [logo(name, round(center-40,2), y+4, 36),
+                     logo("css3", round(center+3,2), y+4, 36)]
+        else:
+            body.append(logo(name, round(center-24,2), y, 48))
+        body.append(text(round(center,2), y+77, label, 21, "text", anchor="middle", weight=500))
+    return svg(width, height, "Skills and tools", body,
+               "Tools used across public and private projects: "+", ".join(label for _, label in SKILLS))
+
+
+def project_mark(project, x, y, size):
+    filename = project.get("project_logo")
+    if not filename:
+        return logo(project["logo"], x, y, size)
+    path = ROOT / "assets" / "project-logos" / filename
+    if path.suffix == ".svg":
+        node = ET.parse(path).getroot()
+        node.set("x", str(x)); node.set("y", str(y))
+        node.set("width", str(size)); node.set("height", str(size))
+        return ET.tostring(node, encoding="unicode")
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f'<image x="{x}" y="{y}" width="{size}" height="{size}" href="data:image/png;base64,{encoded}"/>'
 
 
 def project_card(project, *, compact=False):
-    width, height = (440, 280) if compact else (880, 202)
-    body = [frame(width, height), logo(project["logo"], 28, 25, 48)]
+    width, height = 432, 314
+    body = [frame(width, height), project_mark(project, 24, 22, 72)]
     title = project["title"]
-    if compact and title == "Not Enough Revives Reforged":
-        body += [text(92, 48, "Not Enough Revives", 26, weight=600), text(92, 80, "Reforged", 26, weight=600)]
+    if title == "Not Enough Revives Reforged":
+        body += [text(112, 49, "Not Enough Revives", 26, weight=600), text(112, 80, "Reforged", 26, weight=600)]
+    elif title == "Spuds Shop Reforged":
+        body += [text(112, 49, "Spuds Shop", 28, weight=600), text(112, 80, "Reforged", 28, weight=600)]
     else:
-        body.append(text(92, 61, title, 26 if compact else 32, weight=600, spacing=-0.4))
-    for i, value in enumerate(project["mobile_lines"] if compact else project["lines"]):
-        body.append(text(28, (126 if compact else 115)+i*30, value, 22, "subtext"))
-    body += [text(28, 234 if compact else 167, project["stack"], 20, "muted")]
+        body.append(text(112, 65, title, 28, weight=600, spacing=-0.4))
+    for i, value in enumerate(project["mobile_lines"]):
+        body.append(text(28, 138+i*31, value, 22, "subtext"))
+    body += [logo(project["logo"], 28, 201, 25), text(65, 222, project["stack"], 20, "muted"),
+             line(28, 243, 396, 243), text(28, 281, "Open repository", 21, project["color"], weight=500),
+             f'<path d="M372 283l17-17m-14 0h14v14" fill="none" stroke="{C[project["color"]]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>']
     return svg(width, height, title, body, " ".join(project["lines"])+" "+project["stack"])
 
 
@@ -241,15 +320,18 @@ def activity(data, *, compact=False):
     today = date.fromisoformat(data["updated"])
     total = sum(d["count"] for d in days)
     active = sum(d["count"] > 0 for d in days)
-    stars = sum(r["stargazers_count"] for r in data["repos"] if not r["fork"])
+    private = data.get("private_totals", {"repository_count": 0, "stars_received": 0})
+    repository_count = len(data["repos"])+private["repository_count"]
+    stars = sum(r["stargazers_count"] for r in data["repos"] if not r["fork"])+private["stars_received"]
     start = date.fromisoformat(days[0]["date"])
     sunday = start - timedelta(days=(start.weekday()+1) % 7)
     width, height = (440, 502) if compact else (880, 430)
-    body = [frame(width, height), text(28, 42, "GitHub", 26, weight=600)]
+    body = [frame(width, height), text(28, 42, "GitHub", 26, weight=600),
+            text(142, 42, "Public + private", 20, "muted")]
     if not compact:
         body.append(text(width-28, 41, f"{start:%b %Y} — {today:%b %Y}", 20, "muted", anchor="end"))
     for i, (value, label, color) in enumerate([
-        (len(data["repos"]), "public repos", "lavender"),
+        (repository_count, "repositories", "lavender"),
         (total, "contributions / year", "teal"),
         (active, "active days / year", "peach"),
         (stars, "stars received", "yellow"),
@@ -285,7 +367,7 @@ def activity(data, *, compact=False):
         body.append(rect(width-176+i*17, height-37, 12, 12, color, 2))
     body.append(text(width-28, height-24, "more", 18, "muted", anchor="end"))
     return svg(width, height, "GitHub activity", body,
-               f"{len(data['repos'])} public repositories. {total} contributions and {active} active days in the last year. {stars} stars received. Updated {data['updated']}.")
+               f"{repository_count} public and private repositories. {total} contributions and {active} active days in the last year. {stars} stars received. Updated {data['updated']}.")
 
 
 def weekly_counts(days, today, count=12):
@@ -299,13 +381,6 @@ def weekly_counts(days, today, count=12):
             totals[week] += day["count"]
     return [(start, totals[i]) for i, start in enumerate(starts)]
 
-
-def language_groups(languages):
-    ordered = Counter(languages).most_common()
-    if len(ordered) > 4:
-        ordered = ordered[:3] + [("Other", sum(size for _, size in ordered[3:]))]
-    total = sum(size for _, size in ordered)
-    return [(name, size/total) for name, size in ordered] if total else []
 
 
 def insights(data, *, compact=False):
@@ -337,30 +412,6 @@ def insights(data, *, compact=False):
     return svg(width, height, "Weekly GitHub contributions", body)
 
 
-def languages(data, *, compact=False):
-    groups = language_groups(data["languages"])
-    width, height = (440, 360) if compact else (880, 324)
-    body = [frame(width, height), text(28, 43, "Languages", 26, weight=600),
-            text(28, 77, "Source in public repos · forks excluded", 20, "muted")]
-    colors = {"Python": "lavender", "Java": "peach", "JavaScript": "yellow",
-              "TypeScript": "blue", "Shell": "green", "Other": "surface2"}
-    cursor = 28
-    for i, (name, fraction) in enumerate(groups):
-        color = colors.get(name, ["teal", "mauve", "pink", "blue"][i%4])
-        body.append(rect(round(cursor,2), 104, round(fraction*(width-56),2), 14, color))
-        cursor += fraction*(width-56)
-        y = 158+i*40
-        if name.lower() in {"python", "java"}:
-            body.append(logo(name.lower(), 28, y-23, 30))
-        else:
-            body.append(rect(36, y-14, 12, 12, color, 2))
-        body += [text(72, y, name, 22, "subtext"),
-                 text(width-28, y, f"{fraction:.1%}", 22, "text", anchor="end")]
-    if not groups:
-        body.append(text(28, 160, "No detected source languages yet.", 22, "subtext"))
-    return svg(width, height, "Languages by source bytes", body,
-               "; ".join(f"{name}: {fraction:.1%}" for name, fraction in groups))
-
 
 def markdown_text(value):
     value = escape(" ".join(value.split()))
@@ -370,7 +421,7 @@ def markdown_text(value):
 def project_list(data):
     selected = {p["repo"].lower() for p in PROJECTS}
     rows = []
-    for repo in sorted(language_repos(data["repos"]), key=lambda r: r["name"].lower()):
+    for repo in sorted(public_project_repos(data["repos"]), key=lambda r: r["name"].lower()):
         if repo["name"].lower() in selected:
             continue
         url = f"https://github.com/{USER}/{quote(repo['name'], safe='')}"
@@ -384,12 +435,10 @@ def project_list(data):
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
     assets = {"header.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
-              "languages.svg": languages(data), "tools.svg": tools_row()}
-    assets.update({"header-mobile.svg": header(compact=True), "activity-mobile.svg": activity(data, compact=True),
-                   "insights-mobile.svg": insights(data, compact=True), "languages-mobile.svg": languages(data, compact=True),
-                   "tools-mobile.svg": tools_row(compact=True)})
+              "skills.svg": skills(), "header-mobile.svg": header(compact=True),
+              "activity-mobile.svg": activity(data, compact=True),
+              "insights-mobile.svg": insights(data, compact=True), "skills-mobile.svg": skills(compact=True)}
     assets.update({p["file"]+".svg": project_card(p) for p in PROJECTS})
-    assets.update({p["file"]+"-mobile.svg": project_card(p, compact=True) for p in PROJECTS})
     readme_path = root / "README.md"
     readme = readme_path.read_text()
     pattern = r"(?<=<!-- PROJECTS:START -->).*?(?=<!-- PROJECTS:END -->)"
@@ -406,13 +455,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--from-data", type=Path, help="Render a saved public-data snapshot")
     parser.add_argument("--save-data", type=Path, help="Cache public data for offline artwork edits")
+    parser.add_argument("--refresh-private", action="store_true", help="Refresh aggregate private totals using an authenticated owner token")
     args = parser.parse_args()
+    if args.refresh_private or os.environ.get("PROFILE_STATS_TOKEN"):
+        refresh_private_totals(datetime.now(timezone.utc).date())
     data = json.loads(args.from_data.read_text()) if args.from_data else collect(datetime.now(timezone.utc).date())
     render(data)
     if args.save_data:
         args.save_data.parent.mkdir(parents=True, exist_ok=True)
         args.save_data.write_text(json.dumps(data, indent=2)+"\n")
-    print(f"Rendered {len(PROJECTS)*2+10} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
+    print(f"Rendered {len(PROJECTS)+8} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
 
 
 if __name__ == "__main__":

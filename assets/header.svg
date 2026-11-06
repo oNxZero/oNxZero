@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="220" viewBox="0 0 880 220" role="img" aria-labelledby="title desc">
 <title id="title">oNxZero</title>
 <desc id="desc">making what i need. sometimes releasing it.</desc>
-<rect x="0.5" y="0.5" width="879" height="219" rx="12" fill="#24273a" stroke="#363a4f"/>
+<defs><filter id="panel-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#181926" flood-opacity="0.7"/></filter></defs><rect x="4" y="2" width="868" height="206" rx="14" fill="#24273a" stroke="#494d64" stroke-width="1.5" filter="url(#panel-shadow)"/>
 <text x="28" y="88" fill="#cad3f5" font-size="80" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="700" text-anchor="start" letter-spacing="-2">oNxZero</text>
 <text x="32" y="140" fill="#b8c0e0" font-size="27" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">making what i need. sometimes releasing it.</text>
 <text x="32" y="188" fill="#8bd5ca" font-size="23" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Linux tools · Minecraft mods · small utilities</text>

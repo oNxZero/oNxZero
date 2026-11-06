@@ -5,49 +5,25 @@
 </picture>
 </p>
 
-<p>
-<picture>
-  <source media="(max-width: 600px)" srcset="assets/tools-mobile.svg" />
-  <img src="assets/tools.svg" width="100%" alt="Python, Java, Linux and Git — original tool logos." />
-</picture>
-</p>
-
 ### Projects
 
-<p>
-<a href="https://github.com/oNxZero/Automater">
-<picture>
-  <source media="(max-width: 600px)" srcset="assets/automater-mobile.svg" />
-  <img src="assets/automater.svg" width="100%" alt="Automater — Record and edit keyboard and mouse input on Linux." />
-</picture>
-</a>
+<p align="center">
+  <a href="https://github.com/oNxZero/Automater"><img src="assets/automater.svg" width="400" alt="Open Automater — keyboard and mouse recording on Linux." /></a>
+  <a href="https://github.com/oNxZero/CTM-Gen"><img src="assets/ctm-gen.svg" width="400" alt="Open CTM Generator — connected texture packs from a block texture." /></a>
+  <br />
+  <a href="https://github.com/oNxZero/spuds-shop-reforged"><img src="assets/spuds-shop-reforged.svg" width="400" alt="Open Spuds Shop Reforged — Minecraft shop fork with trade and duplication fixes." /></a>
+  <a href="https://github.com/oNxZero/NotEnoughRevivesReforged"><img src="assets/not-enough-revives.svg" width="400" alt="Open Not Enough Revives Reforged — cooperative revives for Minecraft." /></a>
 </p>
 
-<p>
-<a href="https://github.com/oNxZero/CTM-Gen">
-<picture>
-  <source media="(max-width: 600px)" srcset="assets/ctm-gen-mobile.svg" />
-  <img src="assets/ctm-gen.svg" width="100%" alt="CTM Generator — Generate connected texture packs from a block texture." />
-</picture>
-</a>
-</p>
+### Skills
+
+Tools used across my public and private projects.
 
 <p>
-<a href="https://github.com/oNxZero/spuds-shop-reforged">
 <picture>
-  <source media="(max-width: 600px)" srcset="assets/spuds-shop-reforged-mobile.svg" />
-  <img src="assets/spuds-shop-reforged.svg" width="100%" alt="Spuds Shop Reforged — Minecraft shop fork with fixes for trades and item duplication." />
+  <source media="(max-width: 600px)" srcset="assets/skills-mobile.svg" />
+  <img src="assets/skills.svg" width="100%" alt="Python, Java, C++, JavaScript, TypeScript, Bash, React, Next.js, Vue, HTML and CSS, Tailwind, Node.js, Express, Qt, GTK, Electron, Discord.js, MySQL, PostgreSQL, Prisma, Docker, Cloudflare, Linux, and Git." />
 </picture>
-</a>
-</p>
-
-<p>
-<a href="https://github.com/oNxZero/NotEnoughRevivesReforged">
-<picture>
-  <source media="(max-width: 600px)" srcset="assets/not-enough-revives-mobile.svg" />
-  <img src="assets/not-enough-revives.svg" width="100%" alt="Not Enough Revives Reforged — Minecraft mod for downed players and cooperative revives." />
-</picture>
-</a>
 </p>
 
 ### GitHub activity
@@ -56,7 +32,7 @@
 <a href="https://github.com/oNxZero?tab=overview">
 <picture>
   <source media="(max-width: 600px)" srcset="assets/activity-mobile.svg" />
-  <img src="assets/activity.svg" width="100%" alt="GitHub statistics for the last year and a contribution calendar." />
+  <img src="assets/activity.svg" width="100%" alt="GitHub statistics across public and private projects, with a contribution calendar." />
 </picture>
 </a>
 </p>
@@ -68,13 +44,6 @@
 </picture>
 </p>
 
-<p>
-<picture>
-  <source media="(max-width: 600px)" srcset="assets/languages-mobile.svg" />
-  <img src="assets/languages.svg" width="100%" alt="Language percentages by source bytes in public repositories, excluding forks, archives, and this profile." />
-</picture>
-</p>
-
 <details>
 <summary>All public projects</summary>
 
@@ -83,7 +52,6 @@
 - [AOCrawler](https://github.com/oNxZero/AOCrawler) — Python Crawler for Albion Online
 - [county](https://github.com/oNxZero/county)
 - [Moonlight](https://github.com/oNxZero/Moonlight) — External Autoclicker for Linux
-- [Moonlight-Vanity](https://github.com/oNxZero/Moonlight-Vanity)
 - [OpenEuphoriaBackup](https://github.com/oNxZero/OpenEuphoriaBackup) — lol
 - [pinger](https://github.com/oNxZero/pinger)
 - [rosis-lounge](https://github.com/oNxZero/rosis-lounge) — Minecraft 1.21.1 NeoForge lounge mod with multiplayer shishas, vapes, tobacco farming and drinks
