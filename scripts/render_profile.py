@@ -273,7 +273,7 @@ def activity(data, *, compact=False):
         if current < sunday:
             continue
         col, row = divmod((current-sunday).days, 7)
-        if (current.year, current.month) != last_month and (current.day <= 7 or col == 0):
+        if (current.year, current.month) != last_month and (current.day <= 7 or (col == 0 and not compact)):
             if col < (24 if compact else 51):
                 body.append(text(round(x0+col*step, 2), y0-17, f"{current:%b}", 18, "muted"))
             last_month = (current.year, current.month)
