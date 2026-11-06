@@ -234,7 +234,8 @@ def text(x, y, value, size=14, color="text", *, mono=False, weight=400, anchor="
         character = character if character in font["glyphs"] else "?"
         glyph = font["glyphs"][character]
         if glyph["path"]:
-            positions.append(f'<use href="#glyph-{style}-{ord(character):04x}" x="{round(cursor,2)}"/>')
+            offset = f' y="{glyph["offset_y"]}"' if glyph.get("offset_y") else ""
+            positions.append(f'<use href="#glyph-{style}-{ord(character):04x}" x="{round(cursor,2)}"{offset}/>')
         cursor += glyph["advance"]+spacing/scale
     width = (cursor-spacing/scale)*scale if value else 0
     origin = x-width/2 if anchor == "middle" else x-width if anchor == "end" else x
@@ -488,9 +489,9 @@ def project_list(data):
 
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
-    assets = {"header-palette.svg": header(), "activity-bright.svg": activity(data), "weekly-trend.svg": insights(data),
+    assets = {"header-palette.svg": header(), "activity-aligned.svg": activity(data), "weekly-trend.svg": insights(data),
               "header-palette-mobile.svg": header(compact=True),
-              "activity-bright-mobile.svg": activity(data, compact=True),
+              "activity-aligned-mobile.svg": activity(data, compact=True),
               "weekly-trend-mobile.svg": insights(data, compact=True)}
     assets.update({p["file"]+"-compact.svg": project_card(p) for p in PROJECTS})
     assets.update({"skill-"+name+".svg": skill_card(name, label) for name, label, _ in SKILLS})

@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from fontTools.pens.svgPathPen import SVGPathPen
+from fontTools.pens.boundsPen import BoundsPen
 from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
 
@@ -41,6 +42,15 @@ def main():
             pen = SVGPathPen(glyphs, ntos=number)
             glyphs[name].draw(pen)
             outlines[character] = {"path": pen.getCommands(), "advance": glyphs[name].width}
+        # Align the inline arrow with the numerals' visual center, rather than
+        # the font's lower default math axis.
+        if "→" in outlines:
+            digit_bounds, arrow_bounds = BoundsPen(glyphs), BoundsPen(glyphs)
+            glyphs[cmap[ord("0")]].draw(digit_bounds)
+            glyphs[cmap[ord("→")]].draw(arrow_bounds)
+            outlines["→"]["offset_y"] = round(
+                (digit_bounds.bounds[1]+digit_bounds.bounds[3]
+                 -arrow_bounds.bounds[1]-arrow_bounds.bounds[3])/2, 2)
         atlas[key] = {"family": family, "weight": weight,
                       "units": font["head"].unitsPerEm, "glyphs": outlines}
     target = ROOT / "assets" / "fonts" / "atlas.json"

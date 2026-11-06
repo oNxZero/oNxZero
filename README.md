@@ -40,8 +40,8 @@ Used across my public and private projects. Each logo links to its official site
 <p>
 <a href="https://github.com/oNxZero?tab=overview">
 <picture>
-  <source media="(max-width: 600px)" srcset="assets/profile-v5/activity-bright-mobile.svg" />
-  <img src="assets/profile-v5/activity-bright.svg" width="100%" alt="GitHub statistics across public and private projects, with a contribution calendar." />
+  <source media="(max-width: 600px)" srcset="assets/profile-v5/activity-aligned-mobile.svg" />
+  <img src="assets/profile-v5/activity-aligned.svg" width="100%" alt="GitHub statistics across public and private projects, with a contribution calendar." />
 </picture>
 </a>
 </p>
