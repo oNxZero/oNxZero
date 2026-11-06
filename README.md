@@ -38,18 +38,16 @@ Used across my public and private projects. Each logo links to its official site
 ### GitHub activity
 
 <p>
-<a href="https://github.com/oNxZero?tab=overview">
 <picture>
-  <source media="(max-width: 600px)" srcset="assets/profile-v5/activity-aligned-mobile.svg" />
-  <img src="assets/profile-v5/activity-aligned.svg" width="100%" alt="GitHub statistics across public and private projects, with a contribution calendar." />
+  <source media="(max-width: 600px)" srcset="assets/profile-v5/activity-complete-mobile.svg" />
+  <img src="assets/profile-v5/activity-complete.svg" width="100%" alt="GitHub statistics across public and private projects, with a contribution calendar." />
 </picture>
-</a>
 </p>
 
 <p>
 <picture>
-  <source media="(max-width: 600px)" srcset="assets/profile-v5/weekly-trend-mobile.svg" />
-  <img src="assets/profile-v5/weekly-trend.svg" width="100%" alt="Weekly contributions over the last twelve weeks." />
+  <source media="(max-width: 600px)" srcset="assets/profile-v5/weekly-complete-mobile.svg" />
+  <img src="assets/profile-v5/weekly-complete.svg" width="100%" alt="Weekly contributions over the last twelve weeks." />
 </picture>
 </p>
 

@@ -12,9 +12,16 @@ Images and tool logos are stored in this repository.
   totals include public and private forks, archives, and this profile. Stars
   exclude forks. The snapshot stores only its date, repository count, and star
   count; private repository names and descriptions are never published.
-- Contributions come from the same anonymous, public calendar shown on the
-  GitHub profile. They include whatever anonymized private activity the account
-  has already chosen to show publicly; no private repository data is requested.
+- Contributions come from GitHub's GraphQL contribution calendar, including
+  anonymized private activity shared through **Contribution settings → Private
+  contributions**. The yearly total, heatmap, active days, and weekly chart all
+  use that single calendar. The daily counts and restricted contribution count
+  are saved in [an aggregate snapshot](../data/activity.json); it contains no
+  repository names, commit messages, or other private project details.
+- Turning off private contributions would make the public feed incomplete.
+  If GitHub stops returning private counts after previously including them,
+  the refresh fails and keeps the previous charts and their displayed date.
+  It never silently replaces them with public-only activity.
 - Active days count days with at least one contribution in that calendar.
   Narrow screens use a 26-week calendar so its cells and labels stay readable;
   the totals still cover the full year.
@@ -30,7 +37,7 @@ Images and tool logos are stored in this repository.
 
 [Refresh profile](https://github.com/oNxZero/oNxZero/actions/workflows/profile.yml)
 runs daily at 05:23 UTC, on generator changes, or manually through **Run workflow**.
-Daily activity and public totals use the built-in `GITHUB_TOKEN`. Private totals
+Daily activity and public totals use the built-in `GITHUB_TOKEN`. Private repository totals
 use the committed snapshot, refreshed locally when needed. The generator collects
 and validates all data before
 writing assets. If a source request or calendar parse fails, the existing assets
@@ -40,11 +47,12 @@ To render locally with Python 3.11 or later:
 
 ```bash
 python3 -m unittest discover -s tests -v
-python3 scripts/render_profile.py
+GH_TOKEN="$(gh auth token)" python3 scripts/render_profile.py
 ```
 
-Optionally set `GH_TOKEN` for higher API rate limits. Only `api.github.com`
-receives this token. Local runs also work without authentication.
+Set `GH_TOKEN` for the GraphQL API. Only `api.github.com` receives this token.
+The workflow uses its built-in token; it needs no access to other repositories
+to read the anonymized private counts shared on the public profile.
 
 To refresh the private totals, run with an owner-authenticated `GH_TOKEN`:
 

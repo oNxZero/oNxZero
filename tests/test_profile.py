@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import json
 import importlib.util
 from pathlib import Path
@@ -13,37 +13,70 @@ spec.loader.exec_module(profile)
 
 
 class CalendarTests(unittest.TestCase):
-    def parse(self, markup):
-        parser = profile.CalendarParser()
-        parser.feed(markup)
-        return parser
+    def setUp(self):
+        self.today = date(2026, 11, 6)
+        self.snapshot = {"updated": self.today.isoformat(), "restricted_count": 3868,
+                         "days": [{"date": (self.today-timedelta(days=i)).isoformat(),
+                                   "count": 12, "level": 2} for i in reversed(range(365))]}
 
-    def test_calendar_uses_tooltip_counts_and_ignores_future_days(self):
-        markup = '''
-          <td id="today" data-date="2026-11-06" data-level="4"></td>
-          <tool-tip for="today"><span>1,234 contributions</span> on November 6th.</tool-tip>
-          <td id="future" data-date="2026-11-07" data-level="0"></td>
-        '''
-        self.assertEqual(self.parse(markup).days(date(2026, 11, 6), minimum=1), [
-            {"date": "2026-11-06", "level": 4, "count": 1234},
-        ])
+    def response(self, snapshot):
+        levels = ["NONE", "FIRST_QUARTILE", "SECOND_QUARTILE", "THIRD_QUARTILE", "FOURTH_QUARTILE"]
+        return {"data": {"user": {"contributionsCollection": {
+            "restrictedContributionsCount": snapshot["restricted_count"],
+            "contributionCalendar": {"totalContributions": sum(d["count"] for d in snapshot["days"]),
+                "weeks": [{"contributionDays": [{"date": d["date"], "contributionCount": d["count"],
+                          "contributionLevel": levels[d["level"]]} for d in snapshot["days"]]}]}
+        }}}}
 
-    def test_changed_markup_fails_instead_of_fabricating_zero_activity(self):
-        parser = self.parse('<td id="day" data-date="2026-11-06" data-level="1"></td>')
-        with self.assertRaises(ValueError):
-            parser.days(date(2026, 11, 6), minimum=1)
-        with self.assertRaises(ValueError):
-            self.parse("<div>GitHub is unavailable</div>").days(date(2026, 11, 6))
+    def collect(self, snapshot, root):
+        with patch.object(profile, "ROOT", root), patch.dict("os.environ", {"GH_TOKEN": "test-token"}), \
+                patch.object(profile, "request", return_value=json.dumps(self.response(snapshot))):
+            return profile.collect_activity(self.today)
 
-    def test_missing_days_are_rejected(self):
-        markup = '''
-          <td id="a" data-date="2026-11-04" data-level="0"></td>
-          <tool-tip for="a">No contributions on November 4th.</tool-tip>
-          <td id="b" data-date="2026-11-06" data-level="1"></td>
-          <tool-tip for="b">1 contribution on November 6th.</tool-tip>
-        '''
-        with self.assertRaises(ValueError):
-            self.parse(markup).days(date(2026, 11, 6), minimum=2)
+    def test_private_and_public_activity_use_the_same_daily_calendar(self):
+        with tempfile.TemporaryDirectory() as temp:
+            actual = self.collect(self.snapshot, Path(temp))
+            self.assertEqual(actual, self.snapshot)
+            self.assertEqual(sum(d["count"] for d in actual["days"]), 4380)
+            self.assertNotIn("test-token", json.dumps(actual))
+
+    def test_loss_of_private_counts_keeps_the_previous_complete_snapshot(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "data/activity.json"
+            target.parent.mkdir()
+            saved = json.dumps(self.snapshot)
+            target.write_text(saved)
+            public_only = {**self.snapshot, "restricted_count": 0,
+                           "days": [{**d, "count": 1, "level": 1} for d in self.snapshot["days"]]}
+            with self.assertRaisesRegex(ValueError, "Private contributions disappeared"):
+                self.collect(public_only, root)
+            self.assertEqual(target.read_text(), saved)
+
+    def test_calendar_revisions_are_allowed_when_private_counts_remain_available(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "data").mkdir()
+            (root / "data/activity.json").write_text(json.dumps(self.snapshot))
+            revised = {**self.snapshot, "restricted_count": 3000,
+                       "days": [{**d, "count": 10} for d in self.snapshot["days"]]}
+            self.assertEqual(self.collect(revised, root), revised)
+
+    def test_mismatched_github_total_is_rejected(self):
+        response = self.response(self.snapshot)
+        response["data"]["user"]["contributionsCollection"]["contributionCalendar"]["totalContributions"] += 1
+        with patch.dict("os.environ", {"GH_TOKEN": "test-token"}), \
+                patch.object(profile, "request", return_value=json.dumps(response)):
+            with self.assertRaisesRegex(ValueError, "do not match"):
+                profile.collect_activity(self.today)
+
+    def test_incomplete_stale_and_private_details_in_calendars_are_rejected(self):
+        bad_days = [self.snapshot["days"][:-1], self.snapshot["days"][1:50],
+                    self.snapshot["days"][:100]+self.snapshot["days"][101:],
+                    [{**d, "repository": "private-project"} for d in self.snapshot["days"]]]
+        for days in bad_days:
+            with self.subTest(days=len(days)), self.assertRaises(ValueError):
+                profile.validate_activity({**self.snapshot, "days": days}, self.today)
 
 
 class AggregationTests(unittest.TestCase):

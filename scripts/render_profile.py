@@ -6,7 +6,6 @@ from collections import Counter
 import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
-from html.parser import HTMLParser
 from functools import lru_cache
 import json
 import os
@@ -66,7 +65,7 @@ SKILLS = [
 ]
 
 
-def request(url, *, api=False, token=None):
+def request(url, *, api=False, token=None, payload=None):
     headers = {"User-Agent": f"{USER}-profile", "Accept-Language": "en-US,en;q=0.9"}
     if api:
         if not url.startswith("https://api.github.com/"):
@@ -78,7 +77,10 @@ def request(url, *, api=False, token=None):
             headers["Authorization"] = f"Bearer {token}"
     for attempt in range(3):
         try:
-            with urlopen(Request(url, headers=headers), timeout=25) as response:
+            body = json.dumps(payload).encode() if payload is not None else None
+            if body is not None:
+                headers["Content-Type"] = "application/json"
+            with urlopen(Request(url, headers=headers, data=body), timeout=25) as response:
                 return response.read().decode("utf-8")
         except (HTTPError, URLError, TimeoutError) as error:
             if isinstance(error, HTTPError) and error.code < 500 and error.code != 429:
@@ -133,58 +135,77 @@ def refresh_private_totals(today):
     return totals
 
 
-class CalendarParser(HTMLParser):
-    """Read dates and contribution counts from GitHub's anonymous calendar."""
-
-    def __init__(self):
-        super().__init__()
-        self.cells = {}
-        self.tips = {}
-        self.tip_id = None
-
-    def handle_starttag(self, tag, attrs):
-        attrs = dict(attrs)
-        if tag in {"td", "rect"} and "data-date" in attrs:
-            self.cells[attrs["id"]] = {
-                "date": attrs["data-date"], "level": int(attrs["data-level"]),
-            }
-        if tag == "tool-tip" and "for" in attrs:
-            self.tip_id = attrs["for"]
-            self.tips[self.tip_id] = ""
-
-    def handle_data(self, data):
-        if self.tip_id is not None:
-            self.tips[self.tip_id] += data
-
-    def handle_endtag(self, tag):
-        if tag == "tool-tip":
-            self.tip_id = None
-
-    def days(self, today, *, minimum=350):
-        result = []
-        for cell_id, cell in self.cells.items():
-            if date.fromisoformat(cell["date"]) > today:
-                continue
-            match = re.search(r"\b(No|[\d,]+) contributions? on\b", self.tips.get(cell_id, ""))
-            if not match or cell["level"] not in range(5):
-                raise ValueError(f"Unrecognized contribution data for {cell['date']}")
-            count = 0 if match[1] == "No" else int(match[1].replace(",", ""))
-            if (count == 0) != (cell["level"] == 0):
-                raise ValueError(f"Inconsistent contribution level for {cell['date']}")
-            result.append({**cell, "count": count})
-        result.sort(key=lambda day: day["date"])
-        if len(result) < minimum or len({d["date"] for d in result}) != len(result):
-            raise ValueError("Contribution calendar is missing or incomplete; keeping existing assets")
-        if result:
-            span = (date.fromisoformat(result[-1]["date"]) - date.fromisoformat(result[0]["date"])).days + 1
-            if span != len(result) or result[-1]["date"] != today.isoformat():
-                raise ValueError("Contribution calendar dates are incomplete or stale")
-        return result
-
-
 def public_project_repos(repos):
     return [r for r in repos if not r["private"] and not r["fork"]
             and not r["archived"] and r["name"].lower() != USER.lower()]
+
+
+def validate_activity(snapshot, today, *, minimum=350):
+    if set(snapshot) != {"updated", "restricted_count", "days"}:
+        raise ValueError("Activity snapshot must contain dates and aggregate counts only")
+    if snapshot["updated"] != today.isoformat():
+        raise ValueError("Activity snapshot date does not match its calendar")
+    private = snapshot["restricted_count"]
+    if type(private) is not int or private < 0:
+        raise ValueError("Invalid private contribution count")
+    days = snapshot["days"]
+    if len(days) < minimum:
+        raise ValueError("Contribution calendar is incomplete")
+    previous = None
+    for day in days:
+        if set(day) != {"date", "count", "level"}:
+            raise ValueError("Calendar must contain daily aggregate counts only")
+        current = date.fromisoformat(day["date"])
+        if previous is not None and current != previous + timedelta(days=1):
+            raise ValueError("Contribution calendar dates are incomplete or unordered")
+        if type(day["count"]) is not int or day["count"] < 0:
+            raise ValueError("Invalid daily contribution count")
+        if type(day["level"]) is not int or day["level"] not in range(5):
+            raise ValueError("Invalid contribution level")
+        if (day["count"] == 0) != (day["level"] == 0):
+            raise ValueError("Contribution count and level disagree")
+        previous = current
+    if previous != today or private > sum(d["count"] for d in days):
+        raise ValueError("Contribution calendar is stale or has inconsistent totals")
+    return snapshot
+
+
+def collect_activity(today):
+    token = os.environ.get("GH_TOKEN")
+    if not token:
+        raise ValueError("Set GH_TOKEN to verify contribution totals and private activity visibility")
+    query = """query($login: String!) {
+      user(login: $login) { contributionsCollection {
+        restrictedContributionsCount
+        contributionCalendar { totalContributions weeks {
+          contributionDays { date contributionCount contributionLevel }
+        } }
+      } }
+    }"""
+    response = json.loads(request("https://api.github.com/graphql", api=True, token=token,
+                                  payload={"query": query, "variables": {"login": USER}}))
+    if response.get("errors"):
+        raise ValueError("GitHub could not return the contribution calendar; keeping existing assets")
+    collection = response["data"]["user"]["contributionsCollection"]
+    calendar = collection["contributionCalendar"]
+    levels = {name: i for i, name in enumerate([
+        "NONE", "FIRST_QUARTILE", "SECOND_QUARTILE", "THIRD_QUARTILE", "FOURTH_QUARTILE"])}
+    days = [{"date": day["date"], "count": day["contributionCount"],
+             "level": levels[day["contributionLevel"]]}
+            for week in calendar["weeks"] for day in week["contributionDays"]]
+    snapshot = validate_activity({"updated": today.isoformat(),
+                                 "restricted_count": collection["restrictedContributionsCount"],
+                                 "days": days}, today)
+    if sum(d["count"] for d in days) != calendar["totalContributions"]:
+        raise ValueError("Daily contribution counts do not match GitHub's total")
+    previous_path = ROOT / "data" / "activity.json"
+    if previous_path.exists():
+        previous = json.loads(previous_path.read_text())
+        validate_activity(previous, date.fromisoformat(previous["updated"]))
+        if previous["restricted_count"] > 0 and snapshot["restricted_count"] == 0:
+            raise ValueError("Private contributions disappeared from the feed. Check GitHub's Private "
+                             "contributions setting; keeping the previous complete charts")
+    return snapshot
 
 
 def collect(today):
@@ -200,12 +221,10 @@ def collect(today):
         page += 1
     if not repos:
         raise ValueError("No public repositories found")
-    calendar = CalendarParser()
-    # GitHub's `to` parameter selects a calendar year, not a rolling date range.
-    calendar.feed(request(f"https://github.com/users/{USER}/contributions"))
-    days = calendar.days(today)
+    activity_snapshot = collect_activity(today)
     return {
-        "updated": today.isoformat(), "days": days,
+        "updated": today.isoformat(), "days": activity_snapshot["days"],
+        "activity": activity_snapshot,
         "repos": [{k: r[k] for k in ("name", "description", "html_url", "private", "fork",
                                     "archived", "stargazers_count", "language")} for r in repos],
         "private_totals": read_private_totals(),
@@ -356,7 +375,8 @@ def activity(data, *, compact=False):
     width, height = (440, 536) if compact else (880, 430)
     body = [frame(width, height), rect(26,17,34,34,"text",9), logo("github",29,20,28),
             text(72, 42, "GitHub", 26, weight=600),
-            text(184, 42, "Public + private", 20, "muted")]
+            text(184, 42, "Public + private" if data.get("activity", {}).get("restricted_count", 0)
+                 else "Public activity", 20, "muted")]
     if compact:
         body.append(text(28, 73, f"{start:%b %Y} → {today:%b %Y}", 20, "muted"))
     else:
@@ -489,10 +509,14 @@ def project_list(data):
 
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
-    assets = {"header-palette.svg": header(), "activity-aligned.svg": activity(data), "weekly-trend.svg": insights(data),
+    if "activity" in data:
+        validate_activity(data["activity"], date.fromisoformat(data["updated"]))
+        if data["days"] != data["activity"]["days"]:
+            raise ValueError("Charts and activity snapshot must use the same calendar")
+    assets = {"header-palette.svg": header(), "activity-complete.svg": activity(data), "weekly-complete.svg": insights(data),
               "header-palette-mobile.svg": header(compact=True),
-              "activity-aligned-mobile.svg": activity(data, compact=True),
-              "weekly-trend-mobile.svg": insights(data, compact=True)}
+              "activity-complete-mobile.svg": activity(data, compact=True),
+              "weekly-complete-mobile.svg": insights(data, compact=True)}
     assets.update({p["file"]+"-compact.svg": project_card(p) for p in PROJECTS})
     assets.update({"skill-"+name+".svg": skill_card(name, label) for name, label, _ in SKILLS})
     readme_path = root / "README.md"
@@ -506,6 +530,10 @@ def render(data, root=ROOT):
     for filename, contents in assets.items():
         (artwork / filename).write_text(contents)
     readme_path.write_text(readme)
+    if "activity" in data:
+        target = root / "data" / "activity.json"
+        target.parent.mkdir(exist_ok=True)
+        target.write_text(json.dumps(data["activity"], indent=2)+"\n")
 
 
 def main():
