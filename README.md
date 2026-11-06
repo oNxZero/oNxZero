@@ -1,18 +1,18 @@
 <p>
 <picture>
-  <source media="(max-width: 600px)" srcset="assets/profile-v4/header-mobile.svg" />
-  <img src="assets/profile-v4/header.svg" width="100%" alt="oNxZero — making what i need. sometimes releasing it." />
+  <source media="(max-width: 600px)" srcset="assets/profile-v4/header-centered-mobile.svg" />
+  <img src="assets/profile-v4/header-centered.svg" width="100%" alt="oNxZero — making what i need. sometimes releasing it." />
 </picture>
 </p>
 
 ### Projects
 
 <p align="center">
-  <a href="https://github.com/oNxZero/Automater"><img src="assets/profile-v4/automater.svg" width="400" alt="Open Automater — keyboard and mouse recording on Linux." /></a>
-  <a href="https://github.com/oNxZero/CTM-Gen"><img src="assets/profile-v4/ctm-gen.svg" width="400" alt="Open CTM Generator — connected texture packs from a block texture." /></a>
+  <a href="https://github.com/oNxZero/Automater"><img src="assets/profile-v4/automater-card.svg" width="400" alt="Open Automater — keyboard and mouse recording on Linux." /></a>
+  <a href="https://github.com/oNxZero/CTM-Gen"><img src="assets/profile-v4/ctm-gen-card.svg" width="400" alt="Open CTM Generator — connected texture packs from a block texture." /></a>
   <br />
-  <a href="https://github.com/oNxZero/spuds-shop-reforged"><img src="assets/profile-v4/spuds-shop-reforged.svg" width="400" alt="Open Spuds Shop Reforged — Minecraft shop fork with trade and duplication fixes." /></a>
-  <a href="https://github.com/oNxZero/NotEnoughRevivesReforged"><img src="assets/profile-v4/not-enough-revives.svg" width="400" alt="Open Not Enough Revives Reforged — cooperative revives for Minecraft." /></a>
+  <a href="https://github.com/oNxZero/spuds-shop-reforged"><img src="assets/profile-v4/spuds-shop-reforged-card.svg" width="400" alt="Open Spuds Shop Reforged — Minecraft shop fork with trade and duplication fixes." /></a>
+  <a href="https://github.com/oNxZero/NotEnoughRevivesReforged"><img src="assets/profile-v4/not-enough-revives-card.svg" width="400" alt="Open Not Enough Revives Reforged — cooperative revives for Minecraft." /></a>
 </p>
 
 ### Skills

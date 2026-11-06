@@ -254,14 +254,15 @@ def logo(name, x, y, size):
 
 def header(*, compact=False):
     width, height = (440, 250) if compact else (880, 220)
-    body = [frame(width, height), text(28, 88, USER, 66 if compact else 80, weight=700, spacing=-2)]
+    center = width/2-2
+    body = [frame(width, height), text(center, 88, USER, 66 if compact else 80, weight=700, spacing=-2, anchor="middle")]
     if compact:
-        body += [text(28, 139, "making what i need.", 24, "subtext"),
-                 text(28, 173, "sometimes releasing it.", 24, "subtext"),
-                 text(28, 222, "Linux tools · Minecraft mods", 20, "teal")]
+        body += [text(center, 139, "making what i need.", 24, "subtext", anchor="middle"),
+                 text(center, 173, "sometimes releasing it.", 24, "subtext", anchor="middle"),
+                 text(center, 222, "Linux tools · Minecraft mods", 20, "teal", anchor="middle")]
     else:
-        body += [text(32, 140, "making what i need. sometimes releasing it.", 27, "subtext"),
-                 text(32, 188, "Linux tools · Minecraft mods · small utilities", 23, "teal")]
+        body += [text(center, 140, "making what i need. sometimes releasing it.", 27, "subtext", anchor="middle"),
+                 text(center, 188, "Linux tools · Minecraft mods · small utilities", 23, "teal", anchor="middle")]
     for i, color in enumerate(["lavender", "mauve", "pink", "peach", "green", "teal"]):
         body.append(rect(width-130+i*15, 28, 9, 9, color, 2))
     return svg(width, height, USER, body, "making what i need. sometimes releasing it.")
@@ -291,7 +292,7 @@ def project_mark(project, x, y, size):
 
 
 def project_card(project, *, compact=False):
-    width, height = 432, 314
+    width, height = 432, 264
     body = [frame(width, height), project_mark(project, 24, 22, 72)]
     title = project["title"]
     if title == "Not Enough Revives Reforged":
@@ -303,8 +304,7 @@ def project_card(project, *, compact=False):
     for i, value in enumerate(project["mobile_lines"]):
         body.append(text(28, 138+i*31, value, 22, "subtext"))
     body += [logo(project["logo"], 28, 201, 25), text(65, 222, project["stack"], 20, "muted"),
-             line(28, 243, 396, 243), text(28, 281, "Open repository", 21, project["color"], weight=500),
-             f'<path d="M372 283l17-17m-14 0h14v14" fill="none" stroke="{C[project["color"]]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>']
+             f'<path d="M372 224l17-17m-14 0h14v14" fill="none" stroke="{C[project["color"]]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>']
     return svg(width, height, title, body, " ".join(project["lines"])+" "+project["stack"])
 
 
@@ -429,11 +429,11 @@ def project_list(data):
 
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
-    assets = {"header.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
-              "header-mobile.svg": header(compact=True),
+    assets = {"header-centered.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
+              "header-centered-mobile.svg": header(compact=True),
               "activity-mobile.svg": activity(data, compact=True),
               "insights-mobile.svg": insights(data, compact=True)}
-    assets.update({p["file"]+".svg": project_card(p) for p in PROJECTS})
+    assets.update({p["file"]+"-card.svg": project_card(p) for p in PROJECTS})
     assets.update({"skill-"+name+".svg": skill_card(name, label) for name, label, _ in SKILLS})
     readme_path = root / "README.md"
     readme = readme_path.read_text()
