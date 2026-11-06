@@ -43,11 +43,11 @@ PROJECTS = [
      "lines": ["Record and edit keyboard and mouse input on Linux."],
      "mobile_lines": ["Record keyboard and mouse input.", "Edit and replay it on Linux."],
      "stack": "Python · Qt · Linux"},
-    {"repo": "spuds-shop-reforged", "file": "spuds-shop-reforged",
-     "title": "Spuds Shop Reforged", "color": "peach", "logo": "java", "project_logo": "spuds-shop-reforged.png",
-     "lines": ["Minecraft shop fork with fixes for trades and item duplication."],
-     "mobile_lines": ["Minecraft shop fork with fixes", "for trades and item duplication."],
-     "stack": "Java · NeoForge · fork"},
+    {"repo": "rosis-shop", "file": "rosis-shop",
+     "title": "Rosis Shop", "color": "peach", "logo": "java", "project_logo": "rosis-shop.png",
+     "lines": ["Decorative Minecraft shops with configurable trades and staff."],
+     "mobile_lines": ["Decorative Minecraft shops.", "Trades, stock, and staff access."],
+     "stack": "Java · NeoForge · 1.21.1"},
 ]
 SKILLS = [
     ("python", "Python", "https://www.python.org/"),
@@ -351,8 +351,6 @@ def project_card(project, *, compact=False):
     title = project["title"]
     if title == "Not Enough Revives Reforged":
         body += [text(104, 43, "Not Enough Revives", 26, weight=600), text(104, 73, "Reforged", 26, weight=600)]
-    elif title == "Spuds Shop Reforged":
-        body += [text(104, 43, "Spuds Shop", 28, weight=600), text(104, 73, "Reforged", 28, weight=600)]
     else:
         body.append(text(104, 58, title, 28, weight=600, spacing=-0.4))
     for i, value in enumerate(project["mobile_lines"]):

@@ -112,7 +112,7 @@ from [Simple Icons](https://simpleicons.org/), with its
 [CC0 license](../assets/logos/SIMPLE-ICONS-LICENSE.txt) included.
 
 The project cards reuse the existing CTM Generator, Moonlight, Automater, and
-Spuds Shop artwork.
+Rosis Shop artwork.
 Every project card links to its repository, and each skill tile links to its
 official language, framework, or tool site.
 

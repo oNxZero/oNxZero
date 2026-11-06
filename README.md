@@ -12,7 +12,7 @@
   <a href="https://github.com/oNxZero/Moonlight"><img src="assets/profile-v5/moonlight-compact.svg" width="400" alt="Moonlight — Linux auto-clicker with adjustable timing and presets." /></a>
   <br />
   <a href="https://github.com/oNxZero/Automater"><img src="assets/profile-v5/automater-compact.svg" width="400" alt="Automater — keyboard and mouse recording on Linux." /></a>
-  <a href="https://github.com/oNxZero/spuds-shop-reforged"><img src="assets/profile-v5/spuds-shop-reforged-compact.svg" width="400" alt="Spuds Shop Reforged — Minecraft shop fork with trade and duplication fixes." /></a>
+  <a href="https://github.com/oNxZero/rosis-shop"><img src="assets/profile-v5/rosis-shop-compact.svg" width="400" alt="Rosis Shop — decorative Minecraft shops with trades, stock, and staff access." /></a>
 </p>
 
 ### Skills
