@@ -7,6 +7,7 @@ import base64
 from datetime import date, datetime, timedelta, timezone
 from html import escape
 from html.parser import HTMLParser
+from functools import lru_cache
 import json
 import os
 from pathlib import Path
@@ -28,26 +29,26 @@ C = {
     "peach": "#f5a97f", "yellow": "#eed49f", "pink": "#f5bde6",
 }
 PROJECTS = [
-    {"repo": "Automater", "file": "automater", "title": "Automater",
-     "color": "lavender", "logo": "python", "project_logo": "automater.svg",
-     "lines": ["Record and edit keyboard and mouse input on Linux."],
-     "mobile_lines": ["Record keyboard and mouse input.", "Edit and replay it on Linux."],
-     "stack": "Python · Qt · Linux"},
     {"repo": "CTM-Gen", "file": "ctm-gen", "title": "CTM Generator",
      "color": "teal", "logo": "python", "project_logo": "ctm-gen.png",
      "lines": ["Generate connected texture packs from a block texture."],
      "mobile_lines": ["Generate connected texture packs", "from a block texture."],
      "stack": "Python · Flet · Pillow"},
+    {"repo": "Moonlight", "file": "moonlight", "title": "Moonlight",
+     "color": "mauve", "logo": "python", "project_logo": "moonlight.svg",
+     "lines": ["Linux auto-clicker with adjustable timing and presets."],
+     "mobile_lines": ["Auto-clicking on Linux with", "adjustable timing and presets."],
+     "stack": "Python · GTK · Linux"},
+    {"repo": "Automater", "file": "automater", "title": "Automater",
+     "color": "lavender", "logo": "python", "project_logo": "automater.svg",
+     "lines": ["Record and edit keyboard and mouse input on Linux."],
+     "mobile_lines": ["Record keyboard and mouse input.", "Edit and replay it on Linux."],
+     "stack": "Python · Qt · Linux"},
     {"repo": "spuds-shop-reforged", "file": "spuds-shop-reforged",
      "title": "Spuds Shop Reforged", "color": "peach", "logo": "java", "project_logo": "spuds-shop-reforged.png",
      "lines": ["Minecraft shop fork with fixes for trades and item duplication."],
      "mobile_lines": ["Minecraft shop fork with fixes", "for trades and item duplication."],
      "stack": "Java · NeoForge · fork"},
-    {"repo": "NotEnoughRevivesReforged", "file": "not-enough-revives",
-     "title": "Not Enough Revives Reforged", "color": "green", "logo": "java", "project_logo": "not-enough-revives.gif",
-     "lines": ["Minecraft mod for downed players and cooperative revives."],
-     "mobile_lines": ["Minecraft mod for downed players", "and cooperative revives."],
-     "stack": "Java · NeoForge"},
 ]
 SKILLS = [
     ("python", "Python", "https://www.python.org/"),
@@ -216,11 +217,31 @@ def rect(x, y, w, h, fill, radius=0, **attrs):
     return f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{radius}" fill="{C.get(fill, fill)}" {extra}/>'
 
 
+@lru_cache(maxsize=1)
+def font_atlas():
+    return json.loads((ROOT / "assets" / "fonts" / "atlas.json").read_text())
+
+
 def text(x, y, value, size=14, color="text", *, mono=False, weight=400, anchor="start", spacing=0):
-    family = "ui-monospace, SFMono-Regular, Consolas, monospace" if mono else "-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif"
-    return (f'<text x="{x}" y="{y}" fill="{C.get(color, color)}" font-size="{size}" '
-            f'font-family="{family}" font-weight="{weight}" text-anchor="{anchor}" '
-            f'letter-spacing="{spacing}">{escape(str(value))}</text>')
+    value = str(value)
+    style = ("mono-medium" if mono or re.fullmatch(r"[\d,.%]+", value)
+             else "sans-bold" if weight >= 700 else "sans-semibold" if weight >= 500 else "sans-regular")
+    font = font_atlas()[style]
+    scale = size/font["units"]
+    positions = []
+    cursor = 0
+    for character in value:
+        character = character if character in font["glyphs"] else "?"
+        glyph = font["glyphs"][character]
+        if glyph["path"]:
+            positions.append(f'<use href="#glyph-{style}-{ord(character):04x}" x="{round(cursor,2)}"/>')
+        cursor += glyph["advance"]+spacing/scale
+    width = (cursor-spacing/scale)*scale if value else 0
+    origin = x-width/2 if anchor == "middle" else x-width if anchor == "end" else x
+    return (f'<g aria-label="{escape(value, quote=True)}" data-label="{escape(value, quote=True)}" '
+            f'data-font="{font["family"]}" font-size="{size}" text-anchor="{anchor}" '
+            f'fill="{C.get(color,color)}" transform="translate({round(origin,3)} {y}) scale({scale} {-scale})">'
+            +"".join(positions)+"</g>")
 
 
 def line(x1, y1, x2, y2, color="surface0", **attrs):
@@ -229,10 +250,14 @@ def line(x1, y1, x2, y2, color="surface0", **attrs):
 
 
 def svg(width, height, title, body, description=""):
+    content = "\n".join(body)
+    glyphs = sorted(set(re.findall(r'href="#glyph-([a-z-]+)-([0-9a-f]+)"', content)))
+    outlines = [f'<path id="glyph-{style}-{code}" d="{font_atlas()[style]["glyphs"][chr(int(code,16))]["path"]}"/>'
+                for style,code in glyphs]
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
             f'viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">\n'
             f'<title id="title">{escape(title)}</title>\n<desc id="desc">{escape(description or title)}</desc>\n'
-            + "\n".join(body) + "\n</svg>\n")
+            + "<defs>"+"".join(outlines)+"</defs>\n"+content + "\n</svg>\n")
 
 
 def frame(width, height):
@@ -252,6 +277,13 @@ def logo(name, x, y, size):
     return ET.tostring(node, encoding="unicode")
 
 
+def ui_icon(name, x, y, size, color="muted"):
+    node = ET.parse(ROOT / "assets" / "icons" / (name+".svg")).getroot()
+    for key,value in {"x":x,"y":y,"width":size,"height":size,"stroke":C[color]}.items():
+        node.set(key,str(value))
+    return ET.tostring(node, encoding="unicode")
+
+
 def header(*, compact=False):
     width, height = (440, 250) if compact else (880, 220)
     center = width/2-2
@@ -264,7 +296,9 @@ def header(*, compact=False):
         body += [text(center, 140, "making what i need. sometimes releasing it.", 27, "subtext", anchor="middle"),
                  text(center, 188, "Linux tools · Minecraft mods · small utilities", 23, "teal", anchor="middle")]
     for i, color in enumerate(["lavender", "mauve", "pink", "peach", "green", "teal"]):
-        body.append(rect(width-130+i*15, 28, 9, 9, color, 2))
+        body.append(rect(width-(166 if compact else 176)+i*(22 if compact else 25),
+                         18 if compact else 26, 14 if compact else 16,
+                         14 if compact else 16, color, 3))
     return svg(width, height, USER, body, "making what i need. sometimes releasing it.")
 
 
@@ -292,19 +326,19 @@ def project_mark(project, x, y, size):
 
 
 def project_card(project, *, compact=False):
-    width, height = 432, 264
-    body = [frame(width, height), project_mark(project, 24, 22, 72)]
+    width, height = 432, 224
+    body = [frame(width, height), project_mark(project, 24, 17, 64)]
     title = project["title"]
     if title == "Not Enough Revives Reforged":
-        body += [text(112, 49, "Not Enough Revives", 26, weight=600), text(112, 80, "Reforged", 26, weight=600)]
+        body += [text(104, 43, "Not Enough Revives", 26, weight=600), text(104, 73, "Reforged", 26, weight=600)]
     elif title == "Spuds Shop Reforged":
-        body += [text(112, 49, "Spuds Shop", 28, weight=600), text(112, 80, "Reforged", 28, weight=600)]
+        body += [text(104, 43, "Spuds Shop", 28, weight=600), text(104, 73, "Reforged", 28, weight=600)]
     else:
-        body.append(text(112, 65, title, 28, weight=600, spacing=-0.4))
+        body.append(text(104, 58, title, 28, weight=600, spacing=-0.4))
     for i, value in enumerate(project["mobile_lines"]):
-        body.append(text(28, 138+i*31, value, 22, "subtext"))
-    body += [logo(project["logo"], 28, 201, 25), text(65, 222, project["stack"], 20, "muted"),
-             f'<path d="M372 224l17-17m-14 0h14v14" fill="none" stroke="{C[project["color"]]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>']
+        body.append(text(28, 112+i*28, value, 22, "subtext"))
+    body += [logo(project["logo"], 28, 171, 25), text(65, 192, project["stack"], 20, "muted", mono=True),
+             ui_icon("arrow-up-right",366,170,29,project["color"])]
     return svg(width, height, title, body, " ".join(project["lines"])+" "+project["stack"])
 
 
@@ -319,8 +353,9 @@ def activity(data, *, compact=False):
     start = date.fromisoformat(days[0]["date"])
     sunday = start - timedelta(days=(start.weekday()+1) % 7)
     width, height = (440, 536) if compact else (880, 430)
-    body = [frame(width, height), text(28, 42, "GitHub", 26, weight=600),
-            text(142, 42, "Public + private", 20, "muted")]
+    body = [frame(width, height), rect(26,17,34,34,"text",9), logo("github",29,20,28),
+            text(72, 42, "GitHub", 26, weight=600),
+            text(184, 42, "Public + private", 20, "muted")]
     if compact:
         body.append(text(28, 73, f"{start:%b %Y} → {today:%b %Y}", 20, "muted"))
     else:
@@ -334,17 +369,17 @@ def activity(data, *, compact=False):
         x = 28+(i%2)*212 if compact else 28+i*213
         y = 137+(i//2)*106 if compact else 119
         body += [text(x, y, f"{value:,}", 48 if compact else 54, color, weight=600, spacing=-1),
-                 text(x, y+33, label, 20, "subtext")]
+                 text(x, y+33, label.replace(" / year", " / yr") if compact else label, 20, "subtext")]
     divider = 311 if compact else 190
     body += [line(28, divider, width-28, divider),
              text(28, divider+37, "Last 26 weeks" if compact else "Contributions over the last year", 22, "subtext")]
-    x0, y0, step, size = (66, 395, 12.5, 9) if compact else (66, 275, 14.7, 11)
+    x0, y0, step, size = (66, 395, 12.5, 10) if compact else (66, 275, 14.7, 12)
     if compact:
         sunday = today-timedelta(days=(today.weekday()+1)%7, weeks=25)
     for weekday, label in [(1, "M"), (3, "W"), (5, "F")]:
         body.append(text(28, y0+weekday*step+10, label, 18, "muted"))
     last_month = None
-    heat_colors = ["surface0", "surface2", "overlay", "lavender", "teal"]
+    heat_colors = ["mantle", "blue", "lavender", "teal", "green"]
     for day in days:
         current = date.fromisoformat(day["date"])
         if current < sunday:
@@ -355,7 +390,7 @@ def activity(data, *, compact=False):
                 body.append(text(round(x0+col*step, 2), y0-17, f"{current:%b}", 18, "muted"))
             last_month = (current.year, current.month)
         title = escape(f"{day['date']}: {day['count']} contributions")
-        body.append(f'<g><title>{title}</title>{rect(round(x0+col*step,2),round(y0+row*step,2),size,size,heat_colors[day["level"]],2)}</g>')
+        body.append(f'<g><title>{title}</title>{rect(round(x0+col*step,2),round(y0+row*step,2),size,size,heat_colors[day["level"]],2,stroke=C["surface0"] if day["level"]==0 else C[heat_colors[day["level"]]],stroke_width=0.6)}</g>')
     body += [text(28, height-24, f"{today:%d %b %Y}", 18, "muted"),
              text(width-218, height-24, "less", 18, "muted")]
     for i, color in enumerate(heat_colors):
@@ -381,30 +416,54 @@ def weekly_counts(days, today, count=12):
 def insights(data, *, compact=False):
     today = date.fromisoformat(data["updated"])
     weeks = weekly_counts(data["days"], today)
-    width, height = (440, 350) if compact else (880, 340)
-    body = [frame(width, height), text(28, 43, "Weekly contributions", 26, weight=600),
-            text(28, 76, "Last 12 weeks", 20, "muted")]
+    width, height = (440, 370) if compact else (880, 370)
+    period_total = sum(count for _, count in weeks)
+    body = [frame(width, height), ui_icon("chart-spline",28,23,25,"teal"),
+            text(66, 43, "Weekly contributions", 26, weight=600),
+            text(28, 77, "Last 12 weeks", 20, "muted")]
+    if not compact:
+        body += [text(width-28, 45, f"{period_total:,}", 34, "teal", weight=600, anchor="end"),
+                 text(width-28, 76, "12-week total", 18, "muted", anchor="end")]
+    else:
+        body.append(text(width-28, 77, f"{period_total:,} total", 20, "teal", anchor="end"))
     maximum = max(1, max(count for _, count in weeks))
-    chart_top, chart_bottom = 133, 253
-    # Use fewer labels on narrow screens, with the same underlying weekly data.
+    top, bottom, left, right = 138, 280, 68, width-42
+    points = [(round(left+i*(right-left)/11,2), round(bottom-count/maximum*(bottom-top),2))
+              for i, (_,count) in enumerate(weeks)]
     for ratio in [0, 0.5, 1]:
-        y = chart_bottom-ratio*(chart_bottom-chart_top)
-        body += [line(64, y, width-28, y, stroke_dasharray="3 5"),
-                 text(55, y+6, f"{maximum*ratio:g}", 18, "muted", anchor="end")]
-    gap = (width-112)/12
-    bar_width = 19 if compact else 40
-    for i, (start, count) in enumerate(weeks):
-        x = 76+i*gap
-        bar_height = count/maximum*(chart_bottom-chart_top)
-        color = "teal" if i == 11 else "lavender"
+        y = bottom-ratio*(bottom-top)
+        body += [line(left, y, right, y, stroke_dasharray="3 6"),
+                 text(left-13, y+6, f"{maximum*ratio:g}", 18, "muted", anchor="end")]
+
+    def curve(vertices):
+        result = f"M{vertices[0][0]} {vertices[0][1]}"
+        for (x1,y1),(x2,y2) in zip(vertices,vertices[1:]):
+            control = (x2-x1)*0.4
+            result += f" C{round(x1+control,2)} {y1} {round(x2-control,2)} {y2} {x2} {y2}"
+        return result
+
+    body += ['<defs><linearGradient id="weekly-area" x1="0" y1="0" x2="0" y2="1">'
+             f'<stop offset="0%" stop-color="{C["lavender"]}" stop-opacity="0.28"/>'
+             f'<stop offset="100%" stop-color="{C["lavender"]}" stop-opacity="0.02"/>'
+             '</linearGradient></defs>',
+             f'<path d="{curve(points)} L{right} {bottom} L{left} {bottom} Z" fill="url(#weekly-area)"/>',
+             f'<path d="{curve(points[:-1])}" fill="none" stroke="{C["lavender"]}" stroke-width="3" stroke-linecap="round"/>',
+             f'<path d="{curve(points[-2:])}" fill="none" stroke="{C["teal"]}" stroke-width="3" stroke-dasharray="5 5" stroke-linecap="round"/>']
+    peak = max(range(len(weeks)), key=lambda i: weeks[i][1])
+    for i, ((start,count),(x,y)) in enumerate(zip(weeks,points)):
+        color = "teal" if i==11 else "peach" if i==peak else "lavender"
+        if i==11:
+            body.append(f'<circle cx="{x}" cy="{y}" r="10" fill="{C[color]}" fill-opacity="0.16"/>')
         body.append(f'<g><title>Week of {start}: {count} contributions</title>'
-                    + rect(round(x,2), round(chart_bottom-max(bar_height,2),2), bar_width, round(max(bar_height,2),2), color if count else "surface0", 3)+"</g>")
-        if count and not compact:
-            body.append(text(round(x+bar_width/2,2), round(chart_bottom-bar_height-12,2), count, 20, "subtext", anchor="middle"))
-        if i in [0, 4, 8] or (not compact and i == 11):
-            body.append(text(round(x+bar_width/2,2), chart_bottom+31, f"{start:%d %b}", 18, "muted", anchor="middle"))
-    body.append(text(28, height-22, "The current week is still in progress.", 18, "muted"))
-    return svg(width, height, "Weekly GitHub contributions", body)
+                    f'<circle cx="{x}" cy="{y}" r="4.5" fill="{C[color]}" stroke="{C["base"]}" stroke-width="2"/></g>')
+        if count and (not compact or i in [peak,11]):
+            body.append(text(x, y-16, count, 20, color if i in [peak,11] else "subtext", anchor="middle"))
+        if i in [0,4,8] or (not compact and i==11):
+            body.append(text(x, bottom+31, f"{start:%d %b}", 18, "muted", anchor="middle"))
+    body += [rect(28,height-38,9,9,"teal",4),
+             text(47,height-29,"Current week in progress",18,"muted")]
+    return svg(width,height,"Weekly GitHub contributions",body,
+               f"{period_total} contributions over the last twelve weeks. Current week is incomplete.")
 
 
 
@@ -429,11 +488,11 @@ def project_list(data):
 
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
-    assets = {"header-centered.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
-              "header-centered-mobile.svg": header(compact=True),
-              "activity-mobile.svg": activity(data, compact=True),
-              "insights-mobile.svg": insights(data, compact=True)}
-    assets.update({p["file"]+"-card.svg": project_card(p) for p in PROJECTS})
+    assets = {"header-palette.svg": header(), "activity-bright.svg": activity(data), "weekly-trend.svg": insights(data),
+              "header-palette-mobile.svg": header(compact=True),
+              "activity-bright-mobile.svg": activity(data, compact=True),
+              "weekly-trend-mobile.svg": insights(data, compact=True)}
+    assets.update({p["file"]+"-compact.svg": project_card(p) for p in PROJECTS})
     assets.update({"skill-"+name+".svg": skill_card(name, label) for name, label, _ in SKILLS})
     readme_path = root / "README.md"
     readme = readme_path.read_text()
@@ -441,7 +500,7 @@ def render(data, root=ROOT):
     if len(re.findall(pattern, readme, re.S)) != 1:
         raise ValueError("README project markers are missing or ambiguous")
     readme = re.sub(pattern, lambda _: "\n\n"+project_list(data)+"\n\n", readme, flags=re.S)
-    artwork = root / "assets" / "profile-v4"
+    artwork = root / "assets" / "profile-v5"
     artwork.mkdir(parents=True, exist_ok=True)
     for filename, contents in assets.items():
         (artwork / filename).write_text(contents)

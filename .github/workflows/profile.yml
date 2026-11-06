@@ -11,6 +11,8 @@ on:
       - tests/**
       - assets/logos/**
       - assets/project-logos/**
+      - assets/fonts/**
+      - assets/icons/**
       - data/**
       - .github/workflows/profile.yml
 

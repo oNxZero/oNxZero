@@ -124,8 +124,22 @@ class RenderingTests(unittest.TestCase):
         for compact in [False, True]:
             for renderer in [profile.activity, profile.insights]:
                 root = ET.fromstring(renderer(data, compact=compact))
-                for node in root.iter("{http://www.w3.org/2000/svg}text"):
+                labels = [node for node in root.iter("{http://www.w3.org/2000/svg}g") if "data-label" in node.attrib]
+                self.assertTrue(labels)
+                for node in labels:
                     self.assertGreaterEqual(float(node.attrib["font-size"]), 18)
+
+    def test_font_outlines_are_embedded_and_every_glyph_reference_resolves(self):
+        artwork = profile.header()
+        root = ET.fromstring(artwork)
+        identifiers = {node.attrib["id"] for node in root.iter() if "id" in node.attrib}
+        uses = list(root.iter("{http://www.w3.org/2000/svg}use"))
+        self.assertTrue(uses)
+        for use in uses:
+            self.assertIn(use.attrib["href"][1:], identifiers)
+        self.assertNotIn("@font-face", artwork)
+        self.assertNotIn("https://", artwork)
+        self.assertIn('data-font="Space Grotesk"', artwork)
 
     def test_stats_include_private_repository_totals(self):
         data = {"updated": "2026-11-06", "days": [{"date": "2026-11-06", "count": 3, "level": 1}],

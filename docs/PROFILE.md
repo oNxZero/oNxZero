@@ -80,8 +80,20 @@ original colors and identify the tools used by these projects. GTK's mark comes
 from [Simple Icons](https://simpleicons.org/), with its
 [CC0 license](../assets/logos/SIMPLE-ICONS-LICENSE.txt) included.
 
-The project cards reuse the existing Automater, CTM Generator, and Spuds Shop
-artwork. Not Enough Revives uses the original mod's icon from
-[SirTerminator's Modrinth project](https://modrinth.com/mod/notenoughrevives).
+The project cards reuse the existing CTM Generator, Moonlight, Automater, and
+Spuds Shop artwork.
 Every project card links to its repository, and each skill tile links to its
 official language, framework, or tool site.
+
+## Typography and icons
+
+The artwork uses Space Grotesk for headings and body text, and JetBrains Mono
+for numbers and technology labels. The original fonts and their OFL licenses
+are in `assets/fonts/`. Glyph outlines are embedded into each SVG, so GitHub
+does not need to load fonts or rely on the viewer's installed fonts.
+
+`scripts/build_font_atlas.py` rebuilds `assets/fonts/atlas.json` from those fonts.
+It requires FontTools; daily refreshes read the atlas using the standard library.
+
+Chart and link icons come from [Lucide](https://lucide.dev/), with its
+[license](../assets/icons/LUCIDE-LICENSE.txt) included.
