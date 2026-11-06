@@ -445,9 +445,10 @@ def render(data, root=ROOT):
     if len(re.findall(pattern, readme, re.S)) != 1:
         raise ValueError("README project markers are missing or ambiguous")
     readme = re.sub(pattern, lambda _: "\n\n"+project_list(data)+"\n\n", readme, flags=re.S)
-    (root / "assets").mkdir(exist_ok=True)
+    artwork = root / "assets" / "profile-v3"
+    artwork.mkdir(parents=True, exist_ok=True)
     for filename, contents in assets.items():
-        (root / "assets" / filename).write_text(contents)
+        (artwork / filename).write_text(contents)
     readme_path.write_text(readme)
 
 
