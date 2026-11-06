@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="880" height="430" viewBox="0 0 880 430" role="img" aria-labelledby="title desc">
 <title id="title">GitHub activity</title>
-<desc id="desc">27 public and private repositories. 4296 contributions and 139 active days in the last year. 3 stars received. Updated 2026-11-06.</desc>
+<desc id="desc">24 public and private repositories. 4294 contributions and 139 active days in the last year. 2 stars received. Updated 2026-11-06.</desc>
 <defs><filter id="panel-shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#181926" flood-opacity="0.7"/></filter></defs><rect x="4" y="2" width="868" height="416" rx="14" fill="#24273a" stroke="#494d64" stroke-width="1.5" filter="url(#panel-shadow)"/>
 <text x="28" y="42" fill="#cad3f5" font-size="26" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="0">GitHub</text>
 <text x="142" y="42" fill="#a5adcb" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Public + private</text>
 <text x="852" y="41" fill="#a5adcb" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="end" letter-spacing="0">Nov 2025 → Nov 2026</text>
-<text x="28" y="119" fill="#b7bdf8" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">27</text>
+<text x="28" y="119" fill="#b7bdf8" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">24</text>
 <text x="28" y="152" fill="#b8c0e0" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">repositories</text>
-<text x="241" y="119" fill="#8bd5ca" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">4,296</text>
+<text x="241" y="119" fill="#8bd5ca" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">4,294</text>
 <text x="241" y="152" fill="#b8c0e0" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">contributions / year</text>
 <text x="454" y="119" fill="#f5a97f" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">139</text>
 <text x="454" y="152" fill="#b8c0e0" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">active days / year</text>
-<text x="667" y="119" fill="#eed49f" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">3</text>
+<text x="667" y="119" fill="#eed49f" font-size="54" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="-1">2</text>
 <text x="667" y="152" fill="#b8c0e0" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">stars received</text>
 <line x1="28" y1="190" x2="852" y2="190" stroke="#363a4f" />
 <text x="28" y="227" fill="#b8c0e0" font-size="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Contributions over the last year</text>
@@ -277,7 +277,7 @@
 <g><title>2026-07-07: 0 contributions</title><rect x="580.5" y="304.4" width="11" height="11" rx="2" fill="#363a4f" /></g>
 <g><title>2026-07-08: 0 contributions</title><rect x="580.5" y="319.1" width="11" height="11" rx="2" fill="#363a4f" /></g>
 <g><title>2026-07-09: 1 contributions</title><rect x="580.5" y="333.8" width="11" height="11" rx="2" fill="#5b6078" /></g>
-<g><title>2026-07-10: 11 contributions</title><rect x="580.5" y="348.5" width="11" height="11" rx="2" fill="#5b6078" /></g>
+<g><title>2026-07-10: 8 contributions</title><rect x="580.5" y="348.5" width="11" height="11" rx="2" fill="#5b6078" /></g>
 <g><title>2026-07-11: 0 contributions</title><rect x="580.5" y="363.2" width="11" height="11" rx="2" fill="#363a4f" /></g>
 <g><title>2026-07-12: 0 contributions</title><rect x="595.2" y="275.0" width="11" height="11" rx="2" fill="#363a4f" /></g>
 <g><title>2026-07-13: 5 contributions</title><rect x="595.2" y="289.7" width="11" height="11" rx="2" fill="#5b6078" /></g>
@@ -399,7 +399,7 @@
 <g><title>2026-11-03: 24 contributions</title><rect x="830.4" y="304.4" width="11" height="11" rx="2" fill="#5b6078" /></g>
 <g><title>2026-11-04: 46 contributions</title><rect x="830.4" y="319.1" width="11" height="11" rx="2" fill="#5b6078" /></g>
 <g><title>2026-11-05: 18 contributions</title><rect x="830.4" y="333.8" width="11" height="11" rx="2" fill="#5b6078" /></g>
-<g><title>2026-11-06: 33 contributions</title><rect x="830.4" y="348.5" width="11" height="11" rx="2" fill="#5b6078" /></g>
+<g><title>2026-11-06: 34 contributions</title><rect x="830.4" y="348.5" width="11" height="11" rx="2" fill="#5b6078" /></g>
 <text x="28" y="406" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">06 Nov 2026</text>
 <text x="662" y="406" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">less</text>
 <rect x="704" y="393" width="12" height="12" rx="2" fill="#363a4f" />

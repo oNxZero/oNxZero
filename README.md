@@ -61,7 +61,6 @@ Used across my public and private projects. Each logo links to its official site
 - [AOCrawler](https://github.com/oNxZero/AOCrawler) — Python Crawler for Albion Online
 - [county](https://github.com/oNxZero/county)
 - [Moonlight](https://github.com/oNxZero/Moonlight) — External Autoclicker for Linux
-- [OpenEuphoriaBackup](https://github.com/oNxZero/OpenEuphoriaBackup) — lol
 - [pinger](https://github.com/oNxZero/pinger)
 - [rosis-lounge](https://github.com/oNxZero/rosis-lounge) — Minecraft 1.21.1 NeoForge lounge mod with multiplayer shishas, vapes, tobacco farming and drinks
 - [snaky](https://github.com/oNxZero/snaky)
