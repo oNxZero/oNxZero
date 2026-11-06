@@ -15,6 +15,7 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+import xml.etree.ElementTree as ET
 
 USER = "oNxZero"
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,23 +29,25 @@ C = {
 }
 PROJECTS = [
     {"repo": "Automater", "file": "automater", "title": "Automater",
-     "category": "LINUX TOOL", "color": "lavender", "icon": "cursor",
-     "lines": ["Record input. Edit the workflow.", "Play it back on Linux."],
-     "stack": "Python  /  X11 + Wayland"},
+     "color": "lavender", "logo": "python",
+     "lines": ["Record and edit keyboard and mouse input on Linux."],
+     "mobile_lines": ["Record and edit keyboard and", "mouse input on Linux."],
+     "stack": "Python · Linux · X11 / Wayland"},
     {"repo": "CTM-Gen", "file": "ctm-gen", "title": "CTM Generator",
-     "category": "TEXTURE TOOL", "color": "teal", "icon": "tiles",
-     "lines": ["One block texture in.", "A connected texture pack out."],
-     "stack": "Python  /  Flet + Pillow"},
+     "color": "teal", "logo": "python",
+     "lines": ["Generate connected texture packs from a block texture."],
+     "mobile_lines": ["Generate connected texture packs", "from a block texture."],
+     "stack": "Python · Flet · Pillow"},
     {"repo": "spuds-shop-reforged", "file": "spuds-shop-reforged",
-     "title": "Spuds Shop Reforged", "category": "MINECRAFT / COMMUNITY FORK",
-     "color": "peach", "icon": "shop",
-     "lines": ["Player shops, trade accounting,", "and fewer ways to dupe items."],
-     "stack": "Java  /  NeoForge"},
+     "title": "Spuds Shop Reforged", "color": "peach", "logo": "java",
+     "lines": ["Minecraft shop fork with fixes for trades and item duplication."],
+     "mobile_lines": ["Minecraft shop fork with fixes", "for trades and item duplication."],
+     "stack": "Java · NeoForge · community fork"},
     {"repo": "NotEnoughRevivesReforged", "file": "not-enough-revives",
-     "title": "Not Enough Revives", "category": "MINECRAFT / REFORGED",
-     "color": "green", "icon": "revive",
-     "lines": ["Downed players. Cooperative revives.", "Server-side fixes and customization."],
-     "stack": "Java  /  NeoForge"},
+     "title": "Not Enough Revives Reforged", "color": "green", "logo": "java",
+     "lines": ["Minecraft mod for downed players and cooperative revives."],
+     "mobile_lines": ["Minecraft mod for downed players", "and cooperative revives."],
+     "stack": "Java · NeoForge"},
 ]
 
 
@@ -185,59 +188,52 @@ def frame(width, height):
     return rect(0.5, 0.5, width-1, height-1, "base", 12, stroke=C["surface0"])
 
 
+def logo(name, x, y, size):
+    # Keep the original, full-color brand artwork; inline it for GitHub's SVG sandbox.
+    node = ET.parse(ROOT / "assets" / "logos" / (name+".svg")).getroot()
+    node.set("x", str(x)); node.set("y", str(y))
+    node.set("width", str(size)); node.set("height", str(size))
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
+    return ET.tostring(node, encoding="unicode")
+
+
 def header(*, compact=False):
+    width, height = (440, 250) if compact else (880, 220)
+    body = [frame(width, height), text(28, 88, USER, 66 if compact else 80, weight=700, spacing=-2)]
     if compact:
-        body = [frame(440, 230), text(28, 34, "~/oNxZero", 12, "muted", mono=True),
-                text(26, 112, "oNxZero", 66, weight=700, spacing=-3),
-                text(28, 151, "making what i need.", 17, "subtext"),
-                text(28, 175, "sometimes releasing it.", 17, "subtext"),
-                text(28, 210, "LINUX TOOLS / MINECRAFT MODS / UTILITIES", 10, "teal", mono=True)]
-        for i, color in enumerate(["lavender", "mauve", "pink", "peach", "yellow", "green", "teal", "blue"]):
-            body.append(rect(296+i*14, 24, 8, 8, color, 2))
-        return svg(440, 230, "oNxZero", body)
-    body = [frame(880, 230), text(32, 34, "~/oNxZero", 12, "muted", mono=True)]
-    for i, color in enumerate(["lavender", "mauve", "pink", "peach", "yellow", "green", "teal", "blue"]):
-        body.append(rect(716 + i * 15, 24, 9, 9, color, 2))
-    body += [text(30, 112, "oNxZero", 76, weight=700, spacing=-3),
-             text(33, 151, "making what i need. sometimes releasing it.", 17, "subtext"),
-             text(33, 198, "LINUX TOOLS", 11, "lavender", mono=True, spacing=1),
-             text(151, 198, "/", 11, "surface2", mono=True),
-             text(176, 198, "MINECRAFT MODS", 11, "teal", mono=True, spacing=1),
-             text(317, 198, "/", 11, "surface2", mono=True),
-             text(341, 198, "SMALL UTILITIES", 11, "peach", mono=True, spacing=1)]
-    # A small pixel N / slashed zero, drawn directly rather than using an image service.
-    n = ["1100011", "1110011", "1111011", "1101111", "1100111", "1100011", "1100011"]
-    zero = ["0111110", "1100011", "1100111", "1101011", "1110011", "1100011", "0111110"]
-    for row in range(9):
-        for col in range(18):
-            body.append(rect(623 + col*11, 66 + row*11, 2, 2, "surface1", 0.5))
-    for glyph, origin, color in [(n, 630, "lavender"), (zero, 728, "teal")]:
-        for y, row in enumerate(glyph):
-            for x, bit in enumerate(row):
-                if bit == "1":
-                    body.append(rect(origin+x*11, 75+y*11, 8, 8, color, 1))
-    return svg(880, 230, "oNxZero", body, "making what i need. sometimes releasing it. Linux tools, Minecraft mods, small utilities.")
+        body += [text(28, 139, "making what i need.", 24, "subtext"),
+                 text(28, 173, "sometimes releasing it.", 24, "subtext"),
+                 text(28, 222, "Linux tools · Minecraft mods", 20, "teal")]
+    else:
+        body += [text(32, 140, "making what i need. sometimes releasing it.", 27, "subtext"),
+                 text(32, 188, "Linux tools · Minecraft mods · small utilities", 23, "teal")]
+    for i, color in enumerate(["lavender", "mauve", "pink", "peach", "green", "teal"]):
+        body.append(rect(width-130+i*15, 28, 9, 9, color, 2))
+    return svg(width, height, USER, body, "making what i need. sometimes releasing it.")
 
 
-def icon(kind, x, y, color):
-    paths = {
-        "cursor": '<path d="M5 3v28l7-7 6 12 6-3-6-11h11Z"/>',
-        "tiles": '<rect x="3" y="3" width="13" height="13" rx="2"/><rect x="23" y="3" width="13" height="13" rx="2"/><rect x="3" y="23" width="13" height="13" rx="2"/><rect x="23" y="23" width="13" height="13" rx="2"/><path d="M16 9h7M9 16v7M30 16v7M16 30h7"/>',
-        "shop": '<path d="M4 17h32l-4-12H8L4 17ZM7 22v13h26V22M16 35V23h9v12M4 17v3a4 4 0 0 0 8 0 4 4 0 0 0 8 0 4 4 0 0 0 8 0 4 4 0 0 0 8 0v-3"/>',
-        "revive": '<path d="M15 4h10v11h11v10H25v11H15V25H4V15h11Z"/>',
-    }
-    return f'<g transform="translate({x} {y})" fill="none" stroke="{C[color]}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">{paths[kind]}</g>'
+def tools_row(*, compact=False):
+    width, height = (440, 180) if compact else (880, 100)
+    body = [frame(width, height)]
+    for i, (name, label) in enumerate([("python", "Python"), ("java", "Java"), ("linux", "Linux"), ("git", "Git")]):
+        x = 28+(i%2)*210 if compact else 32+i*213
+        y = 23+(i//2)*80 if compact else 25
+        body += [logo(name, x, y, 48), text(x+62, y+33, label, 23, "text", weight=500)]
+    return svg(width, height, "Python, Java, Linux and Git", body)
 
 
-def project_card(project):
-    color = project["color"]
-    body = [frame(432, 202), text(24, 30, project["category"], 10, color, mono=True, spacing=0.6),
-            icon(project["icon"], 367, 46, color),
-            text(24, 72, project["title"], 23, weight=600, spacing=-0.5)]
-    body += [text(24, 105 + i*22, value, 14, "subtext") for i, value in enumerate(project["lines"])]
-    body += [line(24, 150, 408, 150), text(24, 180, project["stack"], 11, "muted", mono=True),
-             f'<path d="M393 183l12-12m-10 0h10v10" fill="none" stroke="{C[color]}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>']
-    return svg(432, 214, project["title"], body, " ".join(project["lines"]) + " " + project["stack"])
+def project_card(project, *, compact=False):
+    width, height = (440, 280) if compact else (880, 202)
+    body = [frame(width, height), logo(project["logo"], 28, 25, 48)]
+    title = project["title"]
+    if compact and title == "Not Enough Revives Reforged":
+        body += [text(92, 48, "Not Enough Revives", 26, weight=600), text(92, 80, "Reforged", 26, weight=600)]
+    else:
+        body.append(text(92, 61, title, 26 if compact else 32, weight=600, spacing=-0.4))
+    for i, value in enumerate(project["mobile_lines"] if compact else project["lines"]):
+        body.append(text(28, (126 if compact else 115)+i*30, value, 22, "subtext"))
+    body += [text(28, 234 if compact else 167, project["stack"], 20, "muted")]
+    return svg(width, height, title, body, " ".join(project["lines"])+" "+project["stack"])
 
 
 def activity(data, *, compact=False):
@@ -248,49 +244,46 @@ def activity(data, *, compact=False):
     stars = sum(r["stargazers_count"] for r in data["repos"] if not r["fork"])
     start = date.fromisoformat(days[0]["date"])
     sunday = start - timedelta(days=(start.weekday()+1) % 7)
-    width, height = (440, 412) if compact else (880, 326)
-    body = [frame(width, height), text(28, 34, "On GitHub", 16, weight=600),
-            text(width-28, 33, f"{start:%b %Y} — {today:%b %Y}", 10, "muted", mono=True, anchor="end")]
+    width, height = (440, 502) if compact else (880, 430)
+    body = [frame(width, height), text(28, 42, "GitHub", 26, weight=600)]
+    if not compact:
+        body.append(text(width-28, 41, f"{start:%b %Y} — {today:%b %Y}", 20, "muted", anchor="end"))
     for i, (value, label, color) in enumerate([
-        (len(data["repos"]), "public repositories", "lavender"),
+        (len(data["repos"]), "public repos", "lavender"),
         (total, "contributions / year", "teal"),
         (active, "active days / year", "peach"),
         (stars, "stars received", "yellow"),
     ]):
-        x = 28 + (i % 2)*210 if compact else 28 + i*213
-        y = 90 + (i//2)*85 if compact else 90
-        body += [text(x, y, f"{value:,}", 37, color, weight=600, spacing=-1),
-                 text(x, y+25, label, 12, "muted")]
-        if i and not compact:
-            body.append(line(x-20, 59, x-20, 117))
-    body.append(line(28, 221 if compact else 139, width-28, 221 if compact else 139))
-    x0, y0, step, size = (59, 273, 13, 9) if compact else (59, 184, 15, 11)
+        x = 28+(i%2)*212 if compact else 28+i*213
+        y = 105+(i//2)*106 if compact else 119
+        body += [text(x, y, f"{value:,}", 48 if compact else 54, color, weight=600, spacing=-1),
+                 text(x, y+33, label, 20, "subtext")]
+    divider = 273 if compact else 190
+    body += [line(28, divider, width-28, divider),
+             text(28, divider+37, "Last 26 weeks" if compact else "Contributions over the last year", 22, "subtext")]
+    x0, y0, step, size = (66, 357, 12.5, 9) if compact else (66, 275, 14.7, 11)
     if compact:
-        body.append(text(28, 246, "Last 26 weeks", 12, "subtext"))
-        sunday = today - timedelta(days=(today.weekday()+1) % 7, weeks=25)
+        sunday = today-timedelta(days=(today.weekday()+1)%7, weeks=25)
     for weekday, label in [(1, "M"), (3, "W"), (5, "F")]:
-        body.append(text(31, y0+weekday*step+9, label, 10, "muted", mono=True))
+        body.append(text(28, y0+weekday*step+10, label, 18, "muted"))
     last_month = None
     heat_colors = ["surface0", "surface2", "overlay", "lavender", "teal"]
     for day in days:
         current = date.fromisoformat(day["date"])
         if current < sunday:
             continue
-        offset = (current-sunday).days
-        col, row = divmod(offset, 7)
-        x, y = x0+col*step, y0+row*step
+        col, row = divmod((current-sunday).days, 7)
         if (current.year, current.month) != last_month and (current.day <= 7 or col == 0):
             if col < (24 if compact else 51):
-                body.append(text(x, y0-13, f"{current:%b}", 10, "muted", mono=True))
+                body.append(text(round(x0+col*step, 2), y0-17, f"{current:%b}", 18, "muted"))
             last_month = (current.year, current.month)
         title = escape(f"{day['date']}: {day['count']} contributions")
-        body.append(f'<g><title>{title}</title>{rect(x,y,size,size,heat_colors[day["level"]],2)}</g>')
-    footer = height-22
-    body += [text(28, footer, f"Updated {today:%d %b %Y}", 9 if compact else 10, "muted", mono=True),
-             text(width-184, footer, "less", 10, "muted", mono=True)]
+        body.append(f'<g><title>{title}</title>{rect(round(x0+col*step,2),round(y0+row*step,2),size,size,heat_colors[day["level"]],2)}</g>')
+    body += [text(28, height-24, f"{today:%d %b %Y}", 18, "muted"),
+             text(width-218, height-24, "less", 18, "muted")]
     for i, color in enumerate(heat_colors):
-        body.append(rect(width-152+i*15, footer-9, 11, 11, color, 2))
-    body.append(text(width-33, footer, "more", 10, "muted", mono=True, anchor="end"))
+        body.append(rect(width-176+i*17, height-37, 12, 12, color, 2))
+    body.append(text(width-28, height-24, "more", 18, "muted", anchor="end"))
     return svg(width, height, "GitHub activity", body,
                f"{len(data['repos'])} public repositories. {total} contributions and {active} active days in the last year. {stars} stars received. Updated {data['updated']}.")
 
@@ -318,48 +311,55 @@ def language_groups(languages):
 def insights(data, *, compact=False):
     today = date.fromisoformat(data["updated"])
     weeks = weekly_counts(data["days"], today)
-    groups = language_groups(data["languages"])
-    width, height = (440, 520) if compact else (880, 264)
-    body = [frame(width, height), text(28, 34, "Week by week", 16, weight=600),
-            text(28, 55, "Contributions · last 12 weeks", 11, "muted"),
-            line(28, 264, 412, 264) if compact else line(500, 26, 500, 238)]
+    width, height = (440, 350) if compact else (880, 340)
+    body = [frame(width, height), text(28, 43, "Weekly contributions", 26, weight=600),
+            text(28, 76, "Last 12 weeks", 20, "muted")]
     maximum = max(1, max(count for _, count in weeks))
+    chart_top, chart_bottom = 133, 253
+    # Use fewer labels on narrow screens, with the same underlying weekly data.
     for ratio in [0, 0.5, 1]:
-        y = 190 - ratio*100
-        body += [line(54, y, 412 if compact else 470, y, stroke_dasharray="3 5"),
-                 text(44, y+4, f"{maximum*ratio:g}", 9, "muted", mono=True, anchor="end")]
+        y = chart_bottom-ratio*(chart_bottom-chart_top)
+        body += [line(64, y, width-28, y, stroke_dasharray="3 5"),
+                 text(55, y+6, f"{maximum*ratio:g}", 18, "muted", anchor="end")]
+    gap = (width-112)/12
+    bar_width = 19 if compact else 40
     for i, (start, count) in enumerate(weeks):
-        x = 62 + i*(29 if compact else 34)
-        bar_height = count/maximum*100
+        x = 76+i*gap
+        bar_height = count/maximum*(chart_bottom-chart_top)
         color = "teal" if i == 11 else "lavender"
         body.append(f'<g><title>Week of {start}: {count} contributions</title>'
-                    + rect(x, 190-max(bar_height, 2), 19, max(bar_height, 2), color if count else "surface0", 3)
-                    + "</g>")
-        if count:
-            body.append(text(x+9.5, 182-bar_height, count, 10, "muted", mono=True, anchor="middle"))
-        if i in [0, 4, 8, 11]:
-            label = f"{start:%d %b}" + ("*" if i == 11 else "")
-            body.append(text(x+9.5, 211, label, 9, "muted", mono=True, anchor="middle"))
-    body.append(text(28, 241, "* current week", 10, "muted", mono=True))
+                    + rect(round(x,2), round(chart_bottom-max(bar_height,2),2), bar_width, round(max(bar_height,2),2), color if count else "surface0", 3)+"</g>")
+        if count and not compact:
+            body.append(text(round(x+bar_width/2,2), round(chart_bottom-bar_height-12,2), count, 20, "subtext", anchor="middle"))
+        if i in [0, 4, 8] or (not compact and i == 11):
+            body.append(text(round(x+bar_width/2,2), chart_bottom+31, f"{start:%d %b}", 18, "muted", anchor="middle"))
+    body.append(text(28, height-22, "The current week is still in progress.", 18, "muted"))
+    return svg(width, height, "Weekly GitHub contributions", body)
+
+
+def languages(data, *, compact=False):
+    groups = language_groups(data["languages"])
+    width, height = (440, 360) if compact else (880, 324)
+    body = [frame(width, height), text(28, 43, "Languages", 26, weight=600),
+            text(28, 77, "Source in public repos · forks excluded", 20, "muted")]
     colors = {"Python": "lavender", "Java": "peach", "JavaScript": "yellow",
               "TypeScript": "blue", "Shell": "green", "Other": "surface2"}
-    source = [text(530, 34, "Source mix", 16, weight=600),
-              text(530, 55, "Public repos · forks excluded", 11, "muted")]
-    cursor = 530
+    cursor = 28
     for i, (name, fraction) in enumerate(groups):
-        segment_width = fraction*322
-        color = colors.get(name, ["teal", "mauve", "pink", "blue"][i % 4])
-        source.append(rect(round(cursor, 2), 80, round(segment_width, 2), 9, color))
-        cursor += segment_width
-        y = 119+i*28
-        source += [rect(530, y-8, 8, 8, color, 2), text(550, y, name, 12, "subtext"),
-                 text(852, y, f"{fraction:.1%}", 12, "muted", mono=True, anchor="end")]
+        color = colors.get(name, ["teal", "mauve", "pink", "blue"][i%4])
+        body.append(rect(round(cursor,2), 104, round(fraction*(width-56),2), 14, color))
+        cursor += fraction*(width-56)
+        y = 158+i*40
+        if name.lower() in {"python", "java"}:
+            body.append(logo(name.lower(), 28, y-23, 30))
+        else:
+            body.append(rect(36, y-14, 12, 12, color, 2))
+        body += [text(72, y, name, 22, "subtext"),
+                 text(width-28, y, f"{fraction:.1%}", 22, "text", anchor="end")]
     if not groups:
-        source.append(text(530, 122, "No detected source languages yet.", 12, "muted"))
-    source.append(text(530, 241, "By source bytes, not time spent.", 10, "muted", mono=True))
-    body.append(('<g transform="translate(-502 256)">' if compact else '<g>') + "".join(source) + "</g>")
-    desc = "; ".join(f"{name}: {fraction:.1%}" for name, fraction in groups)
-    return svg(440 if compact else 880, height, "Weekly activity and source languages", body, desc)
+        body.append(text(28, 160, "No detected source languages yet.", 22, "subtext"))
+    return svg(width, height, "Languages by source bytes", body,
+               "; ".join(f"{name}: {fraction:.1%}" for name, fraction in groups))
 
 
 def markdown_text(value):
@@ -383,10 +383,13 @@ def project_list(data):
 
 def render(data, root=ROOT):
     # Build everything first. A network or parsing failure never replaces a good chart.
-    assets = {"header.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data)}
+    assets = {"header.svg": header(), "activity.svg": activity(data), "insights.svg": insights(data),
+              "languages.svg": languages(data), "tools.svg": tools_row()}
     assets.update({"header-mobile.svg": header(compact=True), "activity-mobile.svg": activity(data, compact=True),
-                   "insights-mobile.svg": insights(data, compact=True)})
+                   "insights-mobile.svg": insights(data, compact=True), "languages-mobile.svg": languages(data, compact=True),
+                   "tools-mobile.svg": tools_row(compact=True)})
     assets.update({p["file"]+".svg": project_card(p) for p in PROJECTS})
+    assets.update({p["file"]+"-mobile.svg": project_card(p, compact=True) for p in PROJECTS})
     readme_path = root / "README.md"
     readme = readme_path.read_text()
     pattern = r"(?<=<!-- PROJECTS:START -->).*?(?=<!-- PROJECTS:END -->)"
@@ -409,7 +412,7 @@ def main():
     if args.save_data:
         args.save_data.parent.mkdir(parents=True, exist_ok=True)
         args.save_data.write_text(json.dumps(data, indent=2)+"\n")
-    print(f"Rendered {len(PROJECTS)+6} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
+    print(f"Rendered {len(PROJECTS)*2+10} SVGs from {len(data['repos'])} public repositories; {data['updated']}.")
 
 
 if __name__ == "__main__":

@@ -84,12 +84,21 @@ class RenderingTests(unittest.TestCase):
                     {"date": "2026-11-06", "count": 3, "level": 1}],
                 "repos": [], "languages": {"Python": 100, "Java": 50}}
         for compact in [False, True]:
-            for renderer in [profile.activity, profile.insights]:
+            for renderer in [profile.activity, profile.insights, profile.languages]:
                 with self.subTest(compact=compact, renderer=renderer.__name__):
                     root = ET.fromstring(renderer(data, compact=compact))
                     frame = root.find("{http://www.w3.org/2000/svg}rect")
                     self.assertLessEqual(float(frame.attrib["x"])+float(frame.attrib["width"]), float(root.attrib["width"]))
                     self.assertLessEqual(float(frame.attrib["y"])+float(frame.attrib["height"]), float(root.attrib["height"]))
+
+    def test_chart_text_remains_readable_when_scaled_on_a_profile(self):
+        data = {"updated": "2026-11-06", "days": [{"date": "2026-11-06", "count": 3, "level": 1}],
+                "repos": [], "languages": {"Python": 100, "Java": 50}}
+        for compact in [False, True]:
+            for renderer in [profile.activity, profile.insights, profile.languages]:
+                root = ET.fromstring(renderer(data, compact=compact))
+                for node in root.iter("{http://www.w3.org/2000/svg}text"):
+                    self.assertGreaterEqual(float(node.attrib["font-size"]), 18)
 
     def test_svg_text_is_escaped(self):
         for project in profile.PROJECTS:

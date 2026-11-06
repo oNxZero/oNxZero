@@ -9,6 +9,7 @@ on:
     paths:
       - scripts/**
       - tests/**
+      - assets/logos/**
       - .github/workflows/profile.yml
 
 permissions:

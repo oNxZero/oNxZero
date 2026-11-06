@@ -1,44 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="520" viewBox="0 0 440 520" role="img" aria-labelledby="title desc">
-<title id="title">Weekly activity and source languages</title>
-<desc id="desc">Java: 91.7%; Python: 7.6%; GLSL: 0.3%; Other: 0.3%</desc>
-<rect x="0.5" y="0.5" width="439" height="519" rx="12" fill="#24273a" stroke="#363a4f"/>
-<text x="28" y="34" fill="#cad3f5" font-size="16" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="0">Week by week</text>
-<text x="28" y="55" fill="#a5adcb" font-size="11" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Contributions · last 12 weeks</text>
-<line x1="28" y1="264" x2="412" y2="264" stroke="#363a4f" />
-<line x1="54" y1="190" x2="412" y2="190" stroke="#363a4f" stroke-dasharray="3 5"/>
-<text x="44" y="194" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">0</text>
-<line x1="54" y1="140.0" x2="412" y2="140.0" stroke="#363a4f" stroke-dasharray="3 5"/>
-<text x="44" y="144.0" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">384</text>
-<line x1="54" y1="90" x2="412" y2="90" stroke="#363a4f" stroke-dasharray="3 5"/>
-<text x="44" y="94" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">768</text>
-<g><title>Week of 2026-08-16: 511 contributions</title><rect x="62" y="123.46354166666666" width="19" height="66.53645833333334" rx="3" fill="#b7bdf8" /></g>
-<text x="71.5" y="115.46354166666666" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">511</text>
-<text x="71.5" y="211" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">16 Aug</text>
-<g><title>Week of 2026-08-23: 382 contributions</title><rect x="91" y="140.26041666666669" width="19" height="49.73958333333333" rx="3" fill="#b7bdf8" /></g>
-<text x="100.5" y="132.26041666666669" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">382</text>
-<g><title>Week of 2026-08-30: 661 contributions</title><rect x="120" y="103.93229166666666" width="19" height="86.06770833333334" rx="3" fill="#b7bdf8" /></g>
-<text x="129.5" y="95.93229166666666" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">661</text>
-<g><title>Week of 2026-09-06: 768 contributions</title><rect x="149" y="90.0" width="19" height="100.0" rx="3" fill="#b7bdf8" /></g>
-<text x="158.5" y="82.0" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">768</text>
-<g><title>Week of 2026-09-13: 6 contributions</title><rect x="178" y="188" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
-<text x="187.5" y="181.21875" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">6</text>
-<text x="187.5" y="211" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">13 Sep</text>
-<g><title>Week of 2026-09-20: 325 contributions</title><rect x="207" y="147.68229166666669" width="19" height="42.31770833333333" rx="3" fill="#b7bdf8" /></g>
-<text x="216.5" y="139.68229166666669" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">325</text>
-<g><title>Week of 2026-09-27: 400 contributions</title><rect x="236" y="137.91666666666666" width="19" height="52.083333333333336" rx="3" fill="#b7bdf8" /></g>
-<text x="245.5" y="129.91666666666666" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">400</text>
-<g><title>Week of 2026-10-04: 20 contributions</title><rect x="265" y="187.39583333333334" width="19" height="2.604166666666667" rx="3" fill="#b7bdf8" /></g>
-<text x="274.5" y="179.39583333333334" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">20</text>
-<g><title>Week of 2026-10-11: 8 contributions</title><rect x="294" y="188" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
-<text x="303.5" y="180.95833333333334" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">8</text>
-<text x="303.5" y="211" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">11 Oct</text>
-<g><title>Week of 2026-10-18: 1 contributions</title><rect x="323" y="188" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
-<text x="332.5" y="181.86979166666666" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">1</text>
-<g><title>Week of 2026-10-25: 83 contributions</title><rect x="352" y="179.19270833333334" width="19" height="10.807291666666668" rx="3" fill="#b7bdf8" /></g>
-<text x="361.5" y="171.19270833333334" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">83</text>
-<g><title>Week of 2026-11-01: 193 contributions</title><rect x="381" y="164.86979166666666" width="19" height="25.130208333333332" rx="3" fill="#8bd5ca" /></g>
-<text x="390.5" y="156.86979166666666" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">193</text>
-<text x="390.5" y="211" fill="#a5adcb" font-size="9" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="middle" letter-spacing="0">01 Nov*</text>
-<text x="28" y="241" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">* current week</text>
-<g transform="translate(-502 256)"><text x="530" y="34" fill="#cad3f5" font-size="16" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="0">Source mix</text><text x="530" y="55" fill="#a5adcb" font-size="11" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Public repos · forks excluded</text><rect x="530" y="80" width="295.37" height="9" rx="0" fill="#f5a97f" /><rect x="530" y="111" width="8" height="8" rx="2" fill="#f5a97f" /><text x="550" y="119" fill="#b8c0e0" font-size="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Java</text><text x="852" y="119" fill="#a5adcb" font-size="12" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">91.7%</text><rect x="825.37" y="80" width="24.62" height="9" rx="0" fill="#b7bdf8" /><rect x="530" y="139" width="8" height="8" rx="2" fill="#b7bdf8" /><text x="550" y="147" fill="#b8c0e0" font-size="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Python</text><text x="852" y="147" fill="#a5adcb" font-size="12" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">7.6%</text><rect x="849.99" y="80" width="1.12" height="9" rx="0" fill="#f5bde6" /><rect x="530" y="167" width="8" height="8" rx="2" fill="#f5bde6" /><text x="550" y="175" fill="#b8c0e0" font-size="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">GLSL</text><text x="852" y="175" fill="#a5adcb" font-size="12" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">0.3%</text><rect x="851.11" y="80" width="0.89" height="9" rx="0" fill="#5b6078" /><rect x="530" y="195" width="8" height="8" rx="2" fill="#5b6078" /><text x="550" y="203" fill="#b8c0e0" font-size="12" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Other</text><text x="852" y="203" fill="#a5adcb" font-size="12" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="end" letter-spacing="0">0.3%</text><text x="530" y="241" fill="#a5adcb" font-size="10" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-weight="400" text-anchor="start" letter-spacing="0">By source bytes, not time spent.</text></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="350" viewBox="0 0 440 350" role="img" aria-labelledby="title desc">
+<title id="title">Weekly GitHub contributions</title>
+<desc id="desc">Weekly GitHub contributions</desc>
+<rect x="0.5" y="0.5" width="439" height="349" rx="12" fill="#24273a" stroke="#363a4f"/>
+<text x="28" y="43" fill="#cad3f5" font-size="26" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="600" text-anchor="start" letter-spacing="0">Weekly contributions</text>
+<text x="28" y="76" fill="#a5adcb" font-size="20" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">Last 12 weeks</text>
+<line x1="64" y1="253" x2="412" y2="253" stroke="#363a4f" stroke-dasharray="3 5"/>
+<text x="55" y="259" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="end" letter-spacing="0">0</text>
+<line x1="64" y1="193.0" x2="412" y2="193.0" stroke="#363a4f" stroke-dasharray="3 5"/>
+<text x="55" y="199.0" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="end" letter-spacing="0">384</text>
+<line x1="64" y1="133" x2="412" y2="133" stroke="#363a4f" stroke-dasharray="3 5"/>
+<text x="55" y="139" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="end" letter-spacing="0">768</text>
+<g><title>Week of 2026-08-16: 511 contributions</title><rect x="76.0" y="173.16" width="19" height="79.84" rx="3" fill="#b7bdf8" /></g>
+<text x="85.5" y="284" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="middle" letter-spacing="0">16 Aug</text>
+<g><title>Week of 2026-08-23: 382 contributions</title><rect x="103.33" y="193.31" width="19" height="59.69" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-08-30: 661 contributions</title><rect x="130.67" y="149.72" width="19" height="103.28" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-09-06: 768 contributions</title><rect x="158.0" y="133.0" width="19" height="120.0" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-09-13: 6 contributions</title><rect x="185.33" y="251" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
+<text x="194.83" y="284" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="middle" letter-spacing="0">13 Sep</text>
+<g><title>Week of 2026-09-20: 325 contributions</title><rect x="212.67" y="202.22" width="19" height="50.78" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-09-27: 400 contributions</title><rect x="240.0" y="190.5" width="19" height="62.5" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-10-04: 20 contributions</title><rect x="267.33" y="249.88" width="19" height="3.12" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-10-11: 8 contributions</title><rect x="294.67" y="251" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
+<text x="304.17" y="284" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="middle" letter-spacing="0">11 Oct</text>
+<g><title>Week of 2026-10-18: 1 contributions</title><rect x="322.0" y="251" width="19" height="2" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-10-25: 83 contributions</title><rect x="349.33" y="240.03" width="19" height="12.97" rx="3" fill="#b7bdf8" /></g>
+<g><title>Week of 2026-11-01: 194 contributions</title><rect x="376.67" y="222.69" width="19" height="30.31" rx="3" fill="#8bd5ca" /></g>
+<text x="28" y="328" fill="#a5adcb" font-size="18" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif" font-weight="400" text-anchor="start" letter-spacing="0">The current week is still in progress.</text>
 </svg>
