@@ -28,8 +28,8 @@ C = {
     "peach": "#f5a97f", "yellow": "#eed49f", "pink": "#f5bde6",
 }
 PROJECTS = [
-    {"repo": "CTM-Gen", "file": "ctm-gen", "title": "CTM Generator",
-     "color": "teal", "logo": "python", "project_logo": "ctm-gen.png",
+    {"repo": "CTM-Gen", "file": "ctm-generator", "title": "CTM Generator",
+     "color": "teal", "logo": "python", "project_logo": "ctm-generator.png",
      "lines": ["Generate connected texture packs from a block texture."],
      "mobile_lines": ["Generate connected texture packs", "from a block texture."],
      "stack": "Python · Flet · Pillow"},

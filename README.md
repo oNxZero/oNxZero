@@ -8,7 +8,7 @@
 ### Projects
 
 <p align="center">
-  <a href="https://github.com/oNxZero/CTM-Gen"><img src="assets/profile-v5/ctm-gen-compact.svg" width="400" alt="CTM Generator — connected texture packs from a block texture." /></a>
+  <a href="https://github.com/oNxZero/CTM-Gen"><img src="assets/profile-v5/ctm-generator-compact.svg" width="400" alt="CTM Generator — connected texture packs from a block texture." /></a>
   <a href="https://github.com/oNxZero/Moonlight"><img src="assets/profile-v5/moonlight-compact.svg" width="400" alt="Moonlight — Linux auto-clicker with adjustable timing and presets." /></a>
   <br />
   <a href="https://github.com/oNxZero/Automater"><img src="assets/profile-v5/automater-compact.svg" width="400" alt="Automater — keyboard and mouse recording on Linux." /></a>
