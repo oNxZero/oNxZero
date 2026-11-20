@@ -1,6 +1,6 @@
 {
   "updated": "2026-11-20",
-  "restricted_count": 4339,
+  "restricted_count": 4518,
   "days": [
     {
       "date": "2025-11-16",
@@ -1844,13 +1844,13 @@
     },
     {
       "date": "2026-11-19",
-      "count": 5,
-      "level": 1
+      "count": 136,
+      "level": 2
     },
     {
       "date": "2026-11-20",
-      "count": 0,
-      "level": 0
+      "count": 50,
+      "level": 1
     }
   ]
 }
