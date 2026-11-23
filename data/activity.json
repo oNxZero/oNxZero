@@ -1,42 +1,7 @@
 {
-  "updated": "2026-11-21",
-  "restricted_count": 4573,
+  "updated": "2026-11-23",
+  "restricted_count": 4589,
   "days": [
-    {
-      "date": "2025-11-16",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-11-17",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-11-18",
-      "count": 5,
-      "level": 1
-    },
-    {
-      "date": "2025-11-19",
-      "count": 1,
-      "level": 1
-    },
-    {
-      "date": "2025-11-20",
-      "count": 2,
-      "level": 1
-    },
-    {
-      "date": "2025-11-21",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-11-22",
-      "count": 1,
-      "level": 1
-    },
     {
       "date": "2025-11-23",
       "count": 0,
@@ -1854,7 +1819,17 @@
     },
     {
       "date": "2026-11-21",
-      "count": 26,
+      "count": 36,
+      "level": 1
+    },
+    {
+      "date": "2026-11-22",
+      "count": 53,
+      "level": 1
+    },
+    {
+      "date": "2026-11-23",
+      "count": 22,
       "level": 1
     }
   ]
